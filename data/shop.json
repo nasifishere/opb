@@ -388,6 +388,153 @@
       "rarity": "rare",
       "uses": 1,
       "effect": "reset_pulls"
+    },
+    {
+      "name": "Log Pose",
+      "price": 1000,
+      "description": "Essential navigation tool for the Grand Line",
+      "type": "equipment",
+      "subtype": "navigation",
+      "available": true,
+      "category": "utility",
+      "rarity": "uncommon",
+      "statBoost": {
+        "speed": 10
+      }
+    },
+    {
+      "name": "Raw Meat",
+      "price": 200,
+      "description": "Fresh meat from prehistoric creatures",
+      "type": "consumable",
+      "available": true,
+      "category": "food",
+      "rarity": "common",
+      "uses": 1,
+      "effect": "heal_team",
+      "healAmount": 50
+    },
+    {
+      "name": "Wolf Fang",
+      "price": 500,
+      "description": "Sharp fang from a fierce wolf",
+      "type": "equipment",
+      "subtype": "weapon",
+      "available": true,
+      "category": "weapon",
+      "rarity": "common",
+      "statBoost": {
+        "power": 8
+      }
+    },
+    {
+      "name": "Giant's Ale",
+      "price": 1500,
+      "description": "Legendary drink that boosts strength",
+      "type": "consumable",
+      "available": true,
+      "category": "food",
+      "rarity": "rare",
+      "uses": 1,
+      "effect": "strength_boost",
+      "duration": 1800000
+    },
+    {
+      "name": "Explosive Bomb",
+      "price": 800,
+      "description": "Dangerous explosive device",
+      "type": "equipment",
+      "subtype": "weapon",
+      "available": true,
+      "category": "weapon",
+      "rarity": "uncommon",
+      "statBoost": {
+        "power": 15
+      }
+    },
+    {
+      "name": "Giant's Relic",
+      "price": 2000,
+      "description": "Ancient relic from the giants",
+      "type": "equipment",
+      "subtype": "special",
+      "available": true,
+      "category": "legendary",
+      "rarity": "rare",
+      "statBoost": {
+        "power": 12,
+        "health": 12
+      }
+    },
+    {
+      "name": "Crab Shell",
+      "price": 600,
+      "description": "Hard shell from a giant desert crab",
+      "type": "equipment",
+      "subtype": "armor",
+      "available": true,
+      "category": "armor",
+      "rarity": "common",
+      "statBoost": {
+        "health": 8
+      }
+    },
+    {
+      "name": "Desert Cloak",
+      "price": 400,
+      "description": "Protective cloak for desert travel",
+      "type": "equipment",
+      "subtype": "armor",
+      "available": true,
+      "category": "armor",
+      "rarity": "common",
+      "statBoost": {
+        "health": 5,
+        "speed": 5
+      }
+    },
+    {
+      "name": "Sand Scarf",
+      "price": 1200,
+      "description": "Scarf that protects against sand attacks",
+      "type": "equipment",
+      "subtype": "armor",
+      "available": true,
+      "category": "armor",
+      "rarity": "uncommon",
+      "statBoost": {
+        "health": 10,
+        "speed": 8
+      }
+    },
+    {
+      "name": "Drum Kingdom Relic",
+      "price": 1500,
+      "description": "Ancient relic from Drum Kingdom",
+      "type": "equipment",
+      "subtype": "special",
+      "available": true,
+      "category": "legendary",
+      "rarity": "uncommon",
+      "statBoost": {
+        "power": 10,
+        "health": 10
+      }
+    },
+    {
+      "name": "Alabasta Relic",
+      "price": 3000,
+      "description": "Precious relic from the desert kingdom",
+      "type": "equipment",
+      "subtype": "special",
+      "available": true,
+      "category": "legendary",
+      "rarity": "rare",
+      "statBoost": {
+        "power": 15,
+        "health": 15,
+        "speed": 15
+      }
     }
   ],
   "cards": [],

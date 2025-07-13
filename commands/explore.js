@@ -309,6 +309,463 @@ const LOCATIONS = {
             desc: "With Arlong defeated, you've completed the East Blue saga! The Grand Line awaits - Alabasta arc is now unlocked!",
             reward: { type: "saga_unlock", saga: "Alabasta" }
         }
+    ],
+    'REVERSE MOUNTAIN': [
+        {
+            type: "narrative",
+            title: "Enter the Grand Line",
+            desc: "The currents of Reverse Mountain pull you into the Grand Line! The adventure truly begins now!",
+            reward: { type: "chest", tier: "C" }
+        },
+        {
+            type: "narrative",
+            title: "Rough Currents",
+            desc: "The violent currents of Reverse Mountain test your ship's strength and your crew's resolve!",
+            reward: { type: "chest", tier: "C" }
+        },
+        {
+            type: "multi_enemy",
+            title: "Fight: Sea Kings (x2)",
+            desc: "Two massive Sea Kings emerge from the depths to challenge your crew!",
+            enemies: [
+                { name: "Sea King #1", hp: 80, atk: [10, 20], spd: 60, rank: "C" },
+                { name: "Sea King #2", hp: 80, atk: [10, 20], spd: 60, rank: "C" }
+            ],
+            reward: { type: "beli", amount: 75 },
+            loseCooldown: 60 * 60 * 1000
+        },
+        {
+            type: "boss",
+            title: "Laboon Phase 1",
+            desc: "The massive whale Laboon blocks your path! His sheer size makes him nearly invincible!",
+            enemy: { name: "Laboon", hp: 500, atk: [1, 5], spd: 30, rank: "B" },
+            reward: { type: "beli", amount: 100 },
+            loseCooldown: 90 * 60 * 1000
+        },
+        {
+            type: "narrative",
+            title: "You Get Swallowed by Laboon",
+            desc: "Laboon swallows your ship whole! You find yourself inside the massive whale's stomach!",
+            reward: { type: "beli", amount: 50 }
+        },
+        {
+            type: "narrative",
+            title: "Meet Crocus",
+            desc: "Inside Laboon, you meet the mysterious doctor Crocus who has been caring for the whale for decades.",
+            reward: { type: "beli", amount: 50 }
+        },
+        {
+            type: "narrative",
+            title: "Meet Vivi & Mr. 9",
+            desc: "You encounter Princess Vivi and Mr. 9, who are on a secret mission to Alabasta!",
+            reward: { type: "chest", tier: "C" }
+        },
+        {
+            type: "enemy",
+            title: "Fight: Mr. 9",
+            desc: "Mr. 9 challenges you to prove your worth as pirates!",
+            enemy: { name: "Mr. 9", hp: 100, atk: [10, 20], spd: 65, rank: "C" },
+            reward: { type: "card", name: "Vivi", rank: "C" },
+            loseCooldown: 60 * 60 * 1000
+        },
+        {
+            type: "narrative",
+            title: "Obtain Log Pose",
+            desc: "Crocus gives you a Log Pose, the essential navigation tool for the Grand Line!",
+            reward: { type: "item", name: "Log Pose" }
+        },
+        {
+            type: "narrative",
+            title: "Escape Reverse Mountain",
+            desc: "With Laboon's help, you escape through his blowhole and continue your journey!",
+            reward: { type: "chest", tier: "C" }
+        }
+    ],
+    'WHISKEY PEAK': [
+        {
+            type: "narrative",
+            title: "Arrive at Whiskey Peak",
+            desc: "You reach the mysterious Whiskey Peak, where the townspeople seem unusually friendly...",
+            reward: { type: "chest", tier: "C" }
+        },
+        {
+            type: "narrative",
+            title: "Welcome Feast",
+            desc: "The townspeople throw a grand feast in your honor! But something seems suspicious...",
+            reward: { type: "item", name: "Basic Potion" }
+        },
+        {
+            type: "multi_enemy",
+            title: "Fight: 5 Random Bounty Hunters",
+            desc: "The friendly facade drops! Five bounty hunters reveal themselves and attack!",
+            enemies: [
+                { name: "Bounty Hunter #1", hp: 70, atk: [10, 10], spd: 55, rank: "C" },
+                { name: "Bounty Hunter #2", hp: 70, atk: [10, 10], spd: 55, rank: "C" },
+                { name: "Bounty Hunter #3", hp: 70, atk: [10, 10], spd: 55, rank: "C" },
+                { name: "Bounty Hunter #4", hp: 70, atk: [10, 10], spd: 55, rank: "C" },
+                { name: "Bounty Hunter #5", hp: 70, atk: [10, 10], spd: 55, rank: "C" }
+            ],
+            reward: { type: "beli", amount: 50 },
+            loseCooldown: 60 * 60 * 1000
+        },
+        {
+            type: "enemy",
+            title: "Fight: Miss Monday",
+            desc: "The muscular Miss Monday attacks with incredible strength!",
+            enemy: { name: "Miss Monday", hp: 130, atk: [15, 25], spd: 70, rank: "C" },
+            reward: { type: "item", name: "Normal Potion" },
+            loseCooldown: 60 * 60 * 1000
+        },
+        {
+            type: "enemy",
+            title: "Fight: Mr. 8 (Igaram)",
+            desc: "Mr. 8, actually Igaram in disguise, fights to protect Vivi's secret!",
+            enemy: { name: "Mr. 8 (Igaram)", hp: 160, atk: [20, 30], spd: 75, rank: "B" },
+            reward: { type: "chest", tier: "C" },
+            loseCooldown: 90 * 60 * 1000
+        },
+        {
+            type: "multi_enemy",
+            title: "Fight: Whiskey Peak Reinforcements",
+            desc: "More bounty hunters arrive to finish the job!",
+            enemies: [
+                { name: "Reinforcement #1", hp: 100, atk: [15, 15], spd: 60, rank: "C" },
+                { name: "Reinforcement #2", hp: 100, atk: [15, 15], spd: 60, rank: "C" },
+                { name: "Reinforcement #3", hp: 100, atk: [15, 15], spd: 60, rank: "C" }
+            ],
+            reward: { type: "beli", amount: 100 },
+            loseCooldown: 60 * 60 * 1000
+        },
+        {
+            type: "enemy",
+            title: "Fight: Zoro (Misunderstanding)",
+            desc: "A misunderstanding leads to a brief clash with Zoro!",
+            enemy: { name: "Zoro (Misunderstanding)", hp: 200, atk: [25, 35], spd: 80, rank: "B" },
+            reward: { type: "beli", amount: 150 },
+            loseCooldown: 90 * 60 * 1000
+        },
+        {
+            type: "narrative",
+            title: "Robin Appears",
+            desc: "The mysterious Miss All Sunday appears, watching from the shadows...",
+            reward: { type: "beli", amount: 50 }
+        },
+        {
+            type: "choice",
+            title: "CHOICE: Ally or Fight Robin",
+            desc: "Miss All Sunday offers you a choice: become allies or fight to the death!",
+            choice: {
+                yes: { type: "card", name: "Miss All Sunday", rank: "B" },
+                no: { type: "card", name: "Miss All Sunday", rank: "B" }
+            }
+        }
+    ],
+    'LITTLE GARDEN': [
+        {
+            type: "narrative",
+            title: "Arrive on the Island of Giants",
+            desc: "You reach the prehistoric island of Little Garden, where dinosaurs still roam!",
+            reward: { type: "chest", tier: "C" }
+        },
+        {
+            type: "narrative",
+            title: "Meet Dorry & Broggy",
+            desc: "You encounter the legendary giants Dorry and Broggy, who have been fighting for 100 years!",
+            reward: { type: "beli", amount: 50 }
+        },
+        {
+            type: "multi_enemy",
+            title: "Fight: Hungry Dinosaurs (x2)",
+            desc: "Two massive dinosaurs attack your crew!",
+            enemies: [
+                { name: "Hungry Dinosaur #1", hp: 150, atk: [20, 30], spd: 70, rank: "C" },
+                { name: "Hungry Dinosaur #2", hp: 150, atk: [20, 30], spd: 70, rank: "C" }
+            ],
+            reward: { type: "item", name: "Raw Meat" },
+            loseCooldown: 60 * 60 * 1000
+        },
+        {
+            type: "enemy",
+            title: "Fight: Mr. 5 (Sneak Attack)",
+            desc: "Mr. 5 ambushes you with his explosive Devil Fruit powers!",
+            enemy: { name: "Mr. 5", hp: 150, atk: [20, 30], spd: 75, rank: "B" },
+            reward: { type: "card", name: "Mr. 5", rank: "B" },
+            loseCooldown: 90 * 60 * 1000
+        },
+        {
+            type: "enemy",
+            title: "Fight: Miss Valentine (Ambush)",
+            desc: "Miss Valentine attacks from above with her weight-changing abilities!",
+            enemy: { name: "Miss Valentine", hp: 130, atk: [15, 25], spd: 80, rank: "B" },
+            reward: { type: "card", name: "Miss Valentine", rank: "B" },
+            loseCooldown: 90 * 60 * 1000
+        },
+        {
+            type: "narrative",
+            title: "Find Giant's Ale",
+            desc: "You discover the legendary Giant's Ale, a powerful strength-boosting drink!",
+            reward: { type: "item", name: "Giant's Ale" }
+        },
+        {
+            type: "narrative",
+            title: "Dorry Injured (Story Beat)",
+            desc: "Dorry is injured in battle, showing the giants' determination and honor!",
+            reward: { type: "beli", amount: 50 }
+        },
+        {
+            type: "multi_enemy",
+            title: "Fight: Dual Agents (Mr. 5 + Valentine)",
+            desc: "Mr. 5 and Miss Valentine team up for a combined attack!",
+            enemies: [
+                { name: "Mr. 5", hp: 150, atk: [20, 30], spd: 75, rank: "B" },
+                { name: "Miss Valentine", hp: 130, atk: [15, 25], spd: 80, rank: "B" }
+            ],
+            reward: { type: "chest", tier: "B" },
+            loseCooldown: 90 * 60 * 1000
+        },
+        {
+            type: "enemy",
+            title: "Fight: Exploding Trap",
+            desc: "A bomb turret activates, forcing you to fight while avoiding explosions!",
+            enemy: { name: "Bomb Turret", hp: 120, atk: [25, 35], spd: 60, rank: "B" },
+            reward: { type: "item", name: "Explosive Bomb" },
+            loseCooldown: 90 * 60 * 1000
+        },
+        {
+            type: "enemy",
+            title: "Fight: Giant Strength Trial",
+            desc: "Broggy tests your strength in a trial of honor!",
+            enemy: { name: "Broggy (Trial)", hp: 250, atk: [30, 40], spd: 85, rank: "A" },
+            reward: { type: "item", name: "Giant's Relic" },
+            loseCooldown: 120 * 60 * 1000
+        },
+        {
+            type: "narrative",
+            title: "Final Escape Countdown",
+            desc: "The island begins to erupt! You must escape before it's too late!",
+            reward: { type: "beli", amount: 75 }
+        },
+        {
+            type: "narrative",
+            title: "Leave for Drum Island",
+            desc: "With the giants' blessing, you set sail for the snowy island of Drum!",
+            reward: { type: "chest", tier: "C" }
+        }
+    ],
+    'DRUM ISLAND': [
+        {
+            type: "narrative",
+            title: "Cold Arrival",
+            desc: "You reach a snowy island... but villagers drive you off! The cold is unbearable!",
+            reward: { type: "chest", tier: "C" }
+        },
+        {
+            type: "multi_enemy",
+            title: "Fight: Island Wolves (x2)",
+            desc: "Hungry wolves attack you in the snowy wilderness!",
+            enemies: [
+                { name: "Island Wolf #1", hp: 120, atk: [15, 25], spd: 65, rank: "C" },
+                { name: "Island Wolf #2", hp: 120, atk: [15, 25], spd: 65, rank: "C" }
+            ],
+            reward: { type: "item", name: "Wolf Fang" },
+            loseCooldown: 60 * 60 * 1000
+        },
+        {
+            type: "narrative",
+            title: "Meet Dalton",
+            desc: "A mysterious man helps you escape the wolves. He seems to know more than he lets on...",
+            reward: { type: "beli", amount: 50 }
+        },
+        {
+            type: "narrative",
+            title: "Climb Drum Rockies",
+            desc: "You climb up with Nami injured on your back! The mountain is treacherous!",
+            reward: { type: "chest", tier: "C" }
+        },
+        {
+            type: "multi_enemy",
+            title: "Fight: Wapol's Soldiers (x3)",
+            desc: "Three of Wapol's soldiers block your path to the castle!",
+            enemies: [
+                { name: "Wapol Soldier #1", hp: 100, atk: [15, 15], spd: 60, rank: "C" },
+                { name: "Wapol Soldier #2", hp: 100, atk: [15, 15], spd: 60, rank: "C" },
+                { name: "Wapol Soldier #3", hp: 100, atk: [15, 15], spd: 60, rank: "C" }
+            ],
+            reward: { type: "item", name: "Marine Coat" },
+            loseCooldown: 60 * 60 * 1000
+        },
+        {
+            type: "narrative",
+            title: "Meet Dr. Kureha & Chopper",
+            desc: "Inside the castle, two strange doctors greet you. One is a reindeer who can talk!",
+            reward: { type: "item", name: "Basic Potion" }
+        },
+        {
+            type: "enemy",
+            title: "Fight: Chopper (Mistaken Battle)",
+            desc: "Chopper mistakes you for enemies and attacks! His medical knowledge makes him dangerous!",
+            enemy: { name: "Chopper", hp: 200, atk: [25, 35], spd: 80, rank: "B" },
+            reward: { type: "card", name: "Chopper", rank: "B" },
+            loseCooldown: 90 * 60 * 1000
+        },
+        {
+            type: "narrative",
+            title: "Learn Chopper's Backstory",
+            desc: "You learn about Chopper's tragic past and his dream of becoming a great doctor!",
+            reward: { type: "chest", tier: "C" }
+        },
+        {
+            type: "enemy",
+            title: "Fight: Wapol Returns",
+            desc: "Wapol returns to reclaim his castle! His Devil Fruit powers make him a formidable foe!",
+            enemy: { name: "Wapol", hp: 220, atk: [20, 40], spd: 85, rank: "B" },
+            reward: { type: "card", name: "Wapol", rank: "B" },
+            loseCooldown: 90 * 60 * 1000
+        },
+        {
+            type: "multi_enemy",
+            title: "Fight: Chess + Kuromarimo (Mini-Boss Duo)",
+            desc: "Wapol's two strongest subordinates attack together!",
+            enemies: [
+                { name: "Chess", hp: 150, atk: [20, 30], spd: 70, rank: "C" },
+                { name: "Kuromarimo", hp: 170, atk: [25, 35], spd: 75, rank: "B" }
+            ],
+            reward: { type: "item", name: "Drum Kingdom Relic" },
+            loseCooldown: 90 * 60 * 1000
+        },
+        {
+            type: "narrative",
+            title: "Chopper Joins the Crew",
+            desc: "Chopper officially joins your crew as the ship's doctor!",
+            reward: { type: "beli", amount: 150 }
+        },
+        {
+            type: "narrative",
+            title: "Set Sail for Alabasta",
+            desc: "With Chopper aboard, you set sail for the desert kingdom of Alabasta!",
+            reward: { type: "chest", tier: "C" }
+        }
+    ],
+    'ARABASTA': [
+        {
+            type: "narrative",
+            title: "Arrive in Nanohana Port",
+            desc: "You reach the bustling port of Nanohana in the desert kingdom of Alabasta!",
+            reward: { type: "chest", tier: "C" }
+        },
+        {
+            type: "multi_enemy",
+            title: "Fight: Desert Bandits (x2)",
+            desc: "Two desert bandits ambush you in the scorching heat!",
+            enemies: [
+                { name: "Desert Bandit #1", hp: 120, atk: [20, 30], spd: 70, rank: "C" },
+                { name: "Desert Bandit #2", hp: 120, atk: [20, 30], spd: 70, rank: "C" }
+            ],
+            reward: { type: "chest", tier: "B" },
+            loseCooldown: 60 * 60 * 1000
+        },
+        {
+            type: "narrative",
+            title: "Cross the Desert",
+            desc: "You trek through the scorching desert, facing the harsh elements!",
+            reward: { type: "beli", amount: 50 }
+        },
+        {
+            type: "enemy",
+            title: "Fight: Giant Crab",
+            desc: "A massive desert crab emerges from the sand to challenge you!",
+            enemy: { name: "Giant Crab", hp: 250, atk: [20, 40], spd: 75, rank: "B" },
+            reward: { type: "item", name: "Crab Shell" },
+            loseCooldown: 90 * 60 * 1000
+        },
+        {
+            type: "narrative",
+            title: "Meet Bon Clay (Mr. 2)",
+            desc: "You encounter the mysterious Mr. 2 Bon Clay, who can imitate anyone!",
+            reward: { type: "card", name: "Mr. 2", rank: "B" }
+        },
+        {
+            type: "enemy",
+            title: "Fight: Rebel Scouts",
+            desc: "Rebel scouts mistake you for enemies and attack!",
+            enemy: { name: "Rebel Scout", hp: 130, atk: [20, 20], spd: 65, rank: "C" },
+            reward: { type: "item", name: "Desert Cloak" },
+            loseCooldown: 60 * 60 * 1000
+        },
+        {
+            type: "narrative",
+            title: "Meet Koza & Vivi's Past",
+            desc: "You learn about the rebellion leader Koza and Vivi's connection to the conflict!",
+            reward: { type: "chest", tier: "C" }
+        },
+        {
+            type: "enemy",
+            title: "Fight: Mr. 1 & Miss Doublefinger",
+            desc: "Two of Crocodile's strongest agents attack! Mr. 1's blade powers are deadly!",
+            enemy: { name: "Mr. 1", hp: 250, atk: [30, 45], spd: 85, rank: "A" },
+            reward: { type: "card", name: "Mr. 1", rank: "A" },
+            loseCooldown: 120 * 60 * 1000
+        },
+        {
+            type: "multi_enemy",
+            title: "Fight: Mr. 4 & Miss Merry Christmas",
+            desc: "Mr. 4 and Miss Merry Christmas team up for a deadly combination attack!",
+            enemies: [
+                { name: "Mr. 4", hp: 220, atk: [25, 40], spd: 80, rank: "B" },
+                { name: "Miss Merry Christmas", hp: 240, atk: [25, 40], spd: 80, rank: "B" }
+            ],
+            reward: { type: "card", name: "Mr. 4", rank: "B" },
+            loseCooldown: 90 * 60 * 1000
+        },
+        {
+            type: "narrative",
+            title: "Exploding Clock Tower Event",
+            desc: "You rush to stop a bomb from destroying Alubarna! Time is running out!",
+            reward: { type: "chest", tier: "A" }
+        },
+        {
+            type: "enemy",
+            title: "Fight: Crocodile Phase 1",
+            desc: "The Warlord Crocodile appears! His sand powers make him nearly invincible!",
+            enemy: { name: "Crocodile (Phase 1)", hp: 300, atk: [35, 50], spd: 90, rank: "A" },
+            reward: { type: "item", name: "Sand Scarf" },
+            loseCooldown: 120 * 60 * 1000
+        },
+        {
+            type: "enemy",
+            title: "Fight: Crocodile Phase 2",
+            desc: "Crocodile returns for the final battle! This time you're ready for his tricks!",
+            enemy: { name: "Crocodile (Phase 2)", hp: 350, atk: [40, 55], spd: 95, rank: "S" },
+            reward: { type: "multiple", rewards: [
+                { type: "beli", amount: 200 },
+                { type: "card", name: "Crocodile", rank: "S" }
+            ]},
+            loseCooldown: 150 * 60 * 1000
+        },
+        {
+            type: "narrative",
+            title: "Vivi's Goodbye",
+            desc: "Vivi stays behind to help her kingdom rebuild. Her sacrifice is noble!",
+            reward: { type: "beli", amount: 100 }
+        },
+        {
+            type: "narrative",
+            title: "Bonus Explore: Nico Robin Joins",
+            desc: "Nico Robin officially joins your crew! Her knowledge of the ancient world is invaluable!",
+            reward: { type: "multiple", rewards: [
+                { type: "card", name: "Nico Robin", rank: "A" },
+                { type: "chest", tier: "A" }
+            ]}
+        },
+        {
+            type: "narrative",
+            title: "Set Sail — Saga Complete",
+            desc: "With Alabasta saved, you set sail for new adventures! The Grand Line has much more in store!",
+            reward: { type: "multiple", rewards: [
+                { type: "item", name: "Alabasta Relic" },
+                { type: "beli", amount: 300 }
+            ]}
+        }
     ]
 };
 
@@ -318,7 +775,12 @@ const LOCATION_COOLDOWNS = {
     'ORANGE TOWN': 3 * 60 * 1000, // 3 minutes
     'SYRUP VILLAGE': 4 * 60 * 1000, // 4 minutes
     'BARATIE': 5 * 60 * 1000, // 5 minutes
-    'ARLONG PARK': 6 * 60 * 1000 // 6 minutes
+    'ARLONG PARK': 6 * 60 * 1000, // 6 minutes
+    'REVERSE MOUNTAIN': 7 * 60 * 1000, // 7 minutes
+    'WHISKEY PEAK': 8 * 60 * 1000, // 8 minutes
+    'LITTLE GARDEN': 9 * 60 * 1000, // 9 minutes
+    'DRUM ISLAND': 10 * 60 * 1000, // 10 minutes
+    'ARABASTA': 12 * 60 * 1000 // 12 minutes
 };
 
 const DEFEAT_COOLDOWN = 5 * 60 * 1000; // 5 minutes on defeat
@@ -466,6 +928,11 @@ function getCurrentLocation(stage) {
     if (stage < 29) return 'SYRUP VILLAGE';
     if (stage < 34) return 'BARATIE';
     if (stage < 43) return 'ARLONG PARK';
+    if (stage < 53) return 'REVERSE MOUNTAIN';
+    if (stage < 63) return 'WHISKEY PEAK';
+    if (stage < 75) return 'LITTLE GARDEN';
+    if (stage < 87) return 'DRUM ISLAND';
+    if (stage < 102) return 'ARABASTA';
     return 'COMPLETED';
 }
 
@@ -476,6 +943,11 @@ function getLocalStage(globalStage) {
     if (globalStage < 29) return globalStage - 24;
     if (globalStage < 34) return globalStage - 29;
     if (globalStage < 43) return globalStage - 34;
+    if (globalStage < 53) return globalStage - 43;
+    if (globalStage < 63) return globalStage - 53;
+    if (globalStage < 75) return globalStage - 63;
+    if (globalStage < 87) return globalStage - 75;
+    if (globalStage < 102) return globalStage - 87;
     return 0;
 }
 
@@ -486,7 +958,12 @@ function getNextLocation(currentLocation) {
         'ORANGE TOWN',
         'SYRUP VILLAGE',
         'BARATIE',
-        'ARLONG PARK'
+        'ARLONG PARK',
+        'REVERSE MOUNTAIN',
+        'WHISKEY PEAK',
+        'LITTLE GARDEN',
+        'DRUM ISLAND',
+        'ARABASTA'
     ];
     
     const currentIndex = locationOrder.indexOf(currentLocation);
@@ -1527,6 +2004,16 @@ async function handleBattleVictory(interaction, user, battleMessage, battleLog) 
         }
     }
     
+    // Add chest rewards if applicable
+    if (user.lastChestRewards && user.lastChestRewards.tier) {
+        const { formatChestRewards } = require('../utils/chestSystem.js');
+        if (rewardsText) rewardsText += '\n\n';
+        rewardsText += formatChestRewards(user.lastChestRewards.tier, user.lastChestRewards.rewards);
+        
+        // Clear the chest rewards after displaying
+        user.lastChestRewards = null;
+    }
+    
     // Add saga completion bounty
     if (user.stage === 43) {
         if (rewardsText) rewardsText += '\n';
@@ -1617,6 +2104,37 @@ async function applyReward(user, reward) {
             locked: false
         };
         addCardWithTransformation(user, cardToAdd);
+    } else if (reward.type === 'chest') {
+        const { generateChestRewards } = require('../utils/chestSystem.js');
+        const chestRewards = generateChestRewards(reward.tier);
+        
+        // Apply beli reward
+        user.beli = (user.beli || 0) + chestRewards.beli;
+        
+        // Apply item rewards
+        chestRewards.items.forEach(item => {
+            addToInventory(user, item);
+        });
+        
+        // Apply card rewards
+        chestRewards.cards.forEach(card => {
+            const cardToAdd = {
+                name: card.name,
+                rank: card.rank,
+                level: 1,
+                experience: 0,
+                timesUpgraded: 0,
+                locked: false
+            };
+            addCardWithTransformation(user, cardToAdd);
+        });
+        
+        // Store chest rewards for display
+        if (!user.lastChestRewards) user.lastChestRewards = {};
+        user.lastChestRewards = {
+            tier: reward.tier,
+            rewards: chestRewards
+        };
     } else if (reward.type === 'multiple') {
         for (const subReward of reward.rewards) {
             await applyReward(user, subReward);
@@ -1641,6 +2159,10 @@ function getRewardText(reward) {
         return `${reward.name}${count > 1 ? ` x${count}` : ''}`;
     } else if (reward.type === 'card') {
         return `[${reward.rank}] ${reward.name}`;
+    } else if (reward.type === 'chest') {
+        const { CHEST_TIERS } = require('../utils/chestSystem.js');
+        const chestConfig = CHEST_TIERS[reward.tier];
+        return `${chestConfig.emoji} ${chestConfig.name}`;
     } else if (reward.type === 'multiple') {
         return reward.rewards.map(r => getRewardText(r)).join(', ');
     } else if (reward.type === 'saga_unlock') {

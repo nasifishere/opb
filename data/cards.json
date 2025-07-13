@@ -702,5 +702,136 @@
     "image": "https://files.catbox.moe/49nuo9.webp",
     "evolvesFrom": null,
     "saga": "East Blue"
+  },
+  {
+    "name": "Vivi",
+    "shortDesc": "Princess of Alabasta",
+    "phs": "75 / 80 / 85",
+    "rank": "C",
+    "image": "https://files.catbox.moe/placeholder.jpg",
+    "evolvesFrom": null,
+    "saga": "Alabasta"
+  },
+  {
+    "name": "Chopper",
+    "shortDesc": "Reindeer Doctor",
+    "phs": "85 / 90 / 88",
+    "rank": "B",
+    "image": "https://files.catbox.moe/placeholder.jpg",
+    "evolvesFrom": null,
+    "saga": "Drum Island",
+    "evolution": {
+      "nextId": "Chopper (Monster Point, Enies Lobby)",
+      "requiredLevel": 25,
+      "cost": 1000,
+      "requiredSaga": "Enies Lobby",
+      "image": "https://files.catbox.moe/placeholder.jpg"
+    }
+  },
+  {
+    "name": "Chopper (Monster Point, Enies Lobby)",
+    "shortDesc": "Monster Point Form",
+    "phs": "120 / 125 / 130",
+    "rank": "A",
+    "image": "https://files.catbox.moe/placeholder.jpg",
+    "evolvesFrom": "Chopper",
+    "saga": "Enies Lobby"
+  },
+  {
+    "name": "Crocodile",
+    "shortDesc": "Warlord of the Sea",
+    "phs": "140 / 135 / 145",
+    "rank": "S",
+    "image": "https://files.catbox.moe/placeholder.jpg",
+    "evolvesFrom": null,
+    "saga": "Alabasta"
+  },
+  {
+    "name": "Nico Robin",
+    "shortDesc": "Devil Child",
+    "phs": "110 / 115 / 120",
+    "rank": "A",
+    "image": "https://files.catbox.moe/placeholder.jpg",
+    "evolvesFrom": null,
+    "saga": "Alabasta",
+    "evolution": {
+      "nextId": "Nico Robin (Enies Lobby)",
+      "requiredLevel": 30,
+      "cost": 1500,
+      "requiredSaga": "Enies Lobby",
+      "image": "https://files.catbox.moe/placeholder.jpg"
+    }
+  },
+  {
+    "name": "Nico Robin (Enies Lobby)",
+    "shortDesc": "Devil Child (Enies Lobby)",
+    "phs": "135 / 140 / 145",
+    "rank": "S",
+    "image": "https://files.catbox.moe/placeholder.jpg",
+    "evolvesFrom": "Nico Robin",
+    "saga": "Enies Lobby"
+  },
+  {
+    "name": "Mr. 1",
+    "shortDesc": "Blade Man",
+    "phs": "125 / 130 / 135",
+    "rank": "A",
+    "image": "https://files.catbox.moe/placeholder.jpg",
+    "evolvesFrom": null,
+    "saga": "Alabasta"
+  },
+  {
+    "name": "Mr. 2",
+    "shortDesc": "Bon Clay",
+    "phs": "100 / 105 / 110",
+    "rank": "B",
+    "image": "https://files.catbox.moe/placeholder.jpg",
+    "evolvesFrom": null,
+    "saga": "Alabasta"
+  },
+  {
+    "name": "Mr. 4",
+    "shortDesc": "Dog Man",
+    "phs": "115 / 120 / 125",
+    "rank": "B",
+    "image": "https://files.catbox.moe/placeholder.jpg",
+    "evolvesFrom": null,
+    "saga": "Alabasta"
+  },
+  {
+    "name": "Mr. 5",
+    "shortDesc": "Bomb Man",
+    "phs": "95 / 100 / 105",
+    "rank": "B",
+    "image": "https://files.catbox.moe/placeholder.jpg",
+    "evolvesFrom": null,
+    "saga": "Alabasta"
+  },
+  {
+    "name": "Miss All Sunday",
+    "shortDesc": "Nico Robin (Alabasta)",
+    "phs": "110 / 115 / 120",
+    "rank": "B",
+    "image": "https://files.catbox.moe/placeholder.jpg",
+    "evolvesFrom": null,
+    "saga": "Alabasta"
+  },
+  {
+    "name": "Miss Valentine",
+    "shortDesc": "Weight Woman",
+    "phs": "90 / 95 / 100",
+    "rank": "B",
+    "image": "https://files.catbox.moe/placeholder.jpg",
+    "evolvesFrom": null,
+    "saga": "Alabasta"
+  },
+  {
+    "name": "Wapol",
+    "shortDesc": "King of Drum Kingdom",
+    "phs": "105 / 110 / 115",
+    "rank": "B",
+    "image": "https://files.catbox.moe/placeholder.jpg",
+    "evolvesFrom": null,
+    "saga": "Drum Island"
   }
 ]
