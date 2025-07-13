@@ -4,6 +4,7 @@ const { addCardWithTransformation } = require('../utils/cardTransformationSystem
 const { calculateBattleStats, calculateDamage, resetTeamHP } = require('../utils/battleSystem.js');
 const { distributeXPToTeam, XP_PER_LEVEL } = require('../utils/levelSystem.js');
 const { saveUserWithRetry } = require('../utils/saveWithRetry.js');
+const { CHEST_TIERS } = require('../utils/chestSystem.js');
 const path = require('path');
 const fs = require('fs');
 const { createProfessionalTeamDisplay, createEnemyDisplay, createBattleLogDisplay, createBattleStatusDisplay } = require('../utils/uiHelpers.js');
@@ -651,7 +652,10 @@ const LOCATIONS = {
             type: "narrative",
             title: "Arrive in Nanohana Port",
             desc: "You reach the bustling port of Nanohana in the desert kingdom of Alabasta!",
-            reward: { type: "chest", tier: "C" }
+            reward: { type: "multiple", rewards: [
+                { type: "xp", amount: 100 },
+                { type: "chest", tier: "C" }
+            ]}
         },
         {
             type: "multi_enemy",
@@ -661,49 +665,70 @@ const LOCATIONS = {
                 { name: "Desert Bandit #1", hp: 120, atk: [20, 30], spd: 70, rank: "C" },
                 { name: "Desert Bandit #2", hp: 120, atk: [20, 30], spd: 70, rank: "C" }
             ],
-            reward: { type: "chest", tier: "B" },
+            reward: { type: "multiple", rewards: [
+                { type: "xp", amount: 150 },
+                { type: "chest", tier: "B" }
+            ]},
             loseCooldown: 60 * 60 * 1000
         },
         {
             type: "narrative",
             title: "Cross the Desert",
             desc: "You trek through the scorching desert, facing the harsh elements!",
-            reward: { type: "beli", amount: 50 }
+            reward: { type: "multiple", rewards: [
+                { type: "xp", amount: 75 },
+                { type: "beli", amount: 50 }
+            ]}
         },
         {
             type: "enemy",
             title: "Fight: Giant Crab",
             desc: "A massive desert crab emerges from the sand to challenge you!",
             enemy: { name: "Giant Crab", hp: 250, atk: [20, 40], spd: 75, rank: "B" },
-            reward: { type: "item", name: "Crab Shell" },
+            reward: { type: "multiple", rewards: [
+                { type: "xp", amount: 200 },
+                { type: "item", name: "Crab Shell" }
+            ]},
             loseCooldown: 90 * 60 * 1000
         },
         {
             type: "narrative",
             title: "Meet Bon Clay (Mr. 2)",
             desc: "You encounter the mysterious Mr. 2 Bon Clay, who can imitate anyone!",
-            reward: { type: "card", name: "Mr. 2", rank: "B" }
+            reward: { type: "multiple", rewards: [
+                { type: "xp", amount: 100 },
+                { type: "card", name: "Mr. 2", rank: "B" }
+            ]}
         },
         {
             type: "enemy",
             title: "Fight: Rebel Scouts",
             desc: "Rebel scouts mistake you for enemies and attack!",
             enemy: { name: "Rebel Scout", hp: 130, atk: [20, 20], spd: 65, rank: "C" },
-            reward: { type: "item", name: "Desert Cloak" },
+            reward: { type: "multiple", rewards: [
+                { type: "xp", amount: 125 },
+                { type: "item", name: "Desert Cloak" }
+            ]},
             loseCooldown: 60 * 60 * 1000
         },
         {
             type: "narrative",
             title: "Meet Koza & Vivi's Past",
             desc: "You learn about the rebellion leader Koza and Vivi's connection to the conflict!",
-            reward: { type: "chest", tier: "C" }
+            reward: { type: "multiple", rewards: [
+                { type: "xp", amount: 100 },
+                { type: "chest", tier: "C" }
+            ]}
         },
         {
             type: "enemy",
             title: "Fight: Mr. 1 & Miss Doublefinger",
             desc: "Two of Crocodile's strongest agents attack! Mr. 1's blade powers are deadly!",
             enemy: { name: "Mr. 1", hp: 250, atk: [30, 45], spd: 85, rank: "A" },
-            reward: { type: "card", name: "Mr. 1", rank: "A" },
+            reward: { type: "multiple", rewards: [
+                { type: "xp", amount: 300 },
+                { type: "card", name: "Mr. 1", rank: "A" }
+            ]},
             loseCooldown: 120 * 60 * 1000
         },
         {
@@ -714,21 +739,30 @@ const LOCATIONS = {
                 { name: "Mr. 4", hp: 220, atk: [25, 40], spd: 80, rank: "B" },
                 { name: "Miss Merry Christmas", hp: 240, atk: [25, 40], spd: 80, rank: "B" }
             ],
-            reward: { type: "card", name: "Mr. 4", rank: "B" },
+            reward: { type: "multiple", rewards: [
+                { type: "xp", amount: 250 },
+                { type: "card", name: "Mr. 4", rank: "B" }
+            ]},
             loseCooldown: 90 * 60 * 1000
         },
         {
             type: "narrative",
             title: "Exploding Clock Tower Event",
             desc: "You rush to stop a bomb from destroying Alubarna! Time is running out!",
-            reward: { type: "chest", tier: "A" }
+            reward: { type: "multiple", rewards: [
+                { type: "xp", amount: 200 },
+                { type: "chest", tier: "A" }
+            ]}
         },
         {
             type: "enemy",
             title: "Fight: Crocodile Phase 1",
             desc: "The Warlord Crocodile appears! His sand powers make him nearly invincible!",
             enemy: { name: "Crocodile (Phase 1)", hp: 300, atk: [35, 50], spd: 90, rank: "A" },
-            reward: { type: "item", name: "Sand Scarf" },
+            reward: { type: "multiple", rewards: [
+                { type: "xp", amount: 400 },
+                { type: "item", name: "Sand Scarf" }
+            ]},
             loseCooldown: 120 * 60 * 1000
         },
         {
@@ -737,6 +771,7 @@ const LOCATIONS = {
             desc: "Crocodile returns for the final battle! This time you're ready for his tricks!",
             enemy: { name: "Crocodile (Phase 2)", hp: 350, atk: [40, 55], spd: 95, rank: "S" },
             reward: { type: "multiple", rewards: [
+                { type: "xp", amount: 500 },
                 { type: "beli", amount: 200 },
                 { type: "card", name: "Crocodile", rank: "S" }
             ]},
@@ -746,13 +781,17 @@ const LOCATIONS = {
             type: "narrative",
             title: "Vivi's Goodbye",
             desc: "Vivi stays behind to help her kingdom rebuild. Her sacrifice is noble!",
-            reward: { type: "beli", amount: 100 }
+            reward: { type: "multiple", rewards: [
+                { type: "xp", amount: 150 },
+                { type: "beli", amount: 100 }
+            ]}
         },
         {
             type: "narrative",
             title: "Bonus Explore: Nico Robin Joins",
             desc: "Nico Robin officially joins your crew! Her knowledge of the ancient world is invaluable!",
             reward: { type: "multiple", rewards: [
+                { type: "xp", amount: 300 },
                 { type: "card", name: "Nico Robin", rank: "A" },
                 { type: "chest", tier: "A" }
             ]}
@@ -762,6 +801,7 @@ const LOCATIONS = {
             title: "Set Sail — Saga Complete",
             desc: "With Alabasta saved, you set sail for new adventures! The Grand Line has much more in store!",
             reward: { type: "multiple", rewards: [
+                { type: "xp", amount: 400 },
                 { type: "item", name: "Alabasta Relic" },
                 { type: "beli", amount: 300 }
             ]}
@@ -2006,9 +2046,8 @@ async function handleBattleVictory(interaction, user, battleMessage, battleLog) 
     
     // Add chest rewards if applicable
     if (user.lastChestRewards && user.lastChestRewards.tier) {
-        const { formatChestRewards } = require('../utils/chestSystem.js');
         if (rewardsText) rewardsText += '\n\n';
-        rewardsText += formatChestRewards(user.lastChestRewards.tier, user.lastChestRewards.rewards);
+        rewardsText += user.lastChestRewards.message;
         
         // Clear the chest rewards after displaying
         user.lastChestRewards = null;
@@ -2105,35 +2144,15 @@ async function applyReward(user, reward) {
         };
         addCardWithTransformation(user, cardToAdd);
     } else if (reward.type === 'chest') {
-        const { generateChestRewards } = require('../utils/chestSystem.js');
-        const chestRewards = generateChestRewards(reward.tier);
+        // Add chest to user's collection
+        if (!user.chests) user.chests = { C: 0, B: 0, A: 0, S: 0, UR: 0 };
+        user.chests[reward.tier] = (user.chests[reward.tier] || 0) + 1;
         
-        // Apply beli reward
-        user.beli = (user.beli || 0) + chestRewards.beli;
-        
-        // Apply item rewards
-        chestRewards.items.forEach(item => {
-            addToInventory(user, item);
-        });
-        
-        // Apply card rewards
-        chestRewards.cards.forEach(card => {
-            const cardToAdd = {
-                name: card.name,
-                rank: card.rank,
-                level: 1,
-                experience: 0,
-                timesUpgraded: 0,
-                locked: false
-            };
-            addCardWithTransformation(user, cardToAdd);
-        });
-        
-        // Store chest rewards for display
+        // Store chest info for display
         if (!user.lastChestRewards) user.lastChestRewards = {};
         user.lastChestRewards = {
             tier: reward.tier,
-            rewards: chestRewards
+            message: `📦 **${CHEST_TIERS[reward.tier].name}** added to your collection!`
         };
     } else if (reward.type === 'multiple') {
         for (const subReward of reward.rewards) {
@@ -2160,7 +2179,6 @@ function getRewardText(reward) {
     } else if (reward.type === 'card') {
         return `[${reward.rank}] ${reward.name}`;
     } else if (reward.type === 'chest') {
-        const { CHEST_TIERS } = require('../utils/chestSystem.js');
         const chestConfig = CHEST_TIERS[reward.tier];
         return `${chestConfig.emoji} ${chestConfig.name}`;
     } else if (reward.type === 'multiple') {

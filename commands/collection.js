@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const User = require('../db/models/User.js');
 const { isCardInTraining } = require('../utils/trainingSystem.js');
+const { CHEST_TIERS } = require('../utils/chestSystem.js');
 
 const MAX_STORAGE = 250;
 
@@ -121,6 +122,48 @@ const data = new SlashCommandBuilder()
   .setName('collection')
   .setDescription('View your card collection.');
 
+async function showChestsSection(message, user) {
+  // Initialize chests if they don't exist
+  if (!user.chests) {
+    user.chests = { C: 0, B: 0, A: 0, S: 0, UR: 0 };
+  }
+
+  const embed = new EmbedBuilder()
+    .setTitle('📦 Chest Collection')
+    .setDescription('Your collected chests from adventures!')
+    .setColor(0x2c2f33);
+
+  let totalChests = 0;
+  let chestText = '';
+
+  for (const [tier, count] of Object.entries(user.chests)) {
+    if (count > 0) {
+      const chestConfig = CHEST_TIERS[tier];
+      chestText += `${chestConfig.emoji} **${chestConfig.name}**: ${count}\n`;
+      totalChests += count;
+    }
+  }
+
+  if (chestText === '') {
+    chestText = 'No chests yet! Explore the world to find chests.';
+  }
+
+  embed.addFields(
+    { name: 'Your Chests', value: chestText, inline: false },
+    { name: 'Total Chests', value: totalChests.toString(), inline: true }
+  );
+
+  embed.addFields({
+    name: 'How to Open Chests',
+    value: 'Use `op chest open <tier> [amount]`\nExample: `op chest open A 3`',
+    inline: false
+  });
+
+  embed.setFooter({ text: 'Chests contain Beli, items, and cards!' });
+
+  return message.reply({ embeds: [embed] });
+}
+
 async function execute(message, args) {
   const userId = message.author.id;
   const username = message.author.username;
@@ -152,14 +195,21 @@ async function execute(message, args) {
     return message.reply("You have no cards!");
   }
 
-  const arg = (args[0] || "").toUpperCase();
-  if (["S", "A", "B", "C", "UR"].includes(arg)) {
+  const arg = (args[0] || "").toLowerCase();
+  
+  // Handle chests section
+  if (arg === "chests") {
+    return await showChestsSection(message, user);
+  }
+  
+  // Handle rank filtering
+  if (["s", "a", "b", "c", "ur"].includes(arg)) {
     cardInstances = cardInstances.filter(ci => {
       const card = getCardByUserInstance(ci);
-      return card && card.rank && card.rank.toUpperCase() === arg;
+      return card && card.rank && card.rank.toUpperCase() === arg.toUpperCase();
     });
     if (cardInstances.length === 0) {
-      return message.reply(`You have no cards of rank ${arg}!`);
+      return message.reply(`You have no cards of rank ${arg.toUpperCase()}!`);
     }
   }
 

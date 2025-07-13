@@ -66,10 +66,28 @@ const data = new SlashCommandBuilder()
 
 async function execute(message, args) {
   const userId = message.author.id;
-  const itemName = args.join(' ').trim();
+  
+  if (args.length < 1) {
+    return message.reply('Usage: `op buy <item name> [amount]`\n\nUse `op shop` to see available items.\nExample: `op buy rustycutlass 10`');
+  }
+
+  // Parse amount from the last argument if it's a number
+  let amount = 1;
+  let itemName = args.join(' ').trim();
+  
+  // Check if last argument is a number
+  const lastArg = args[args.length - 1];
+  if (!isNaN(lastArg) && parseInt(lastArg) > 0) {
+    amount = parseInt(lastArg);
+    itemName = args.slice(0, -1).join(' ').trim();
+  }
 
   if (!itemName) {
-    return message.reply('Usage: `op buy <item name>`\n\nUse `op shop` to see available items.');
+    return message.reply('Usage: `op buy <item name> [amount]`\n\nUse `op shop` to see available items.\nExample: `op buy rustycutlass 10`');
+  }
+
+  if (amount < 1 || amount > 100) {
+    return message.reply('You can only buy 1-100 items at a time.');
   }
 
   let user = await User.findOne({ userId });
@@ -94,8 +112,9 @@ async function execute(message, args) {
     return message.reply(`"${item.name}" is currently out of stock.`);
   }
 
-  if (user.beli < item.price) {
-    return message.reply(`You don't have enough Beli! You need ${item.price}, but you only have ${user.beli}.`);
+  const totalCost = item.price * amount;
+  if (user.beli < totalCost) {
+    return message.reply(`You don't have enough Beli! You need ${totalCost.toLocaleString()}, but you only have ${user.beli.toLocaleString()}.`);
   }
 
   const normalizedItemName = normalize(item.name);
@@ -104,10 +123,14 @@ async function execute(message, args) {
   }
 
   // Process purchase
-  user.beli -= item.price;
+  user.beli -= totalCost;
 
   // Handle different item types
   if (item.type === 'card') {
+    // For cards, only allow buying 1 at a time
+    if (amount > 1) {
+      return message.reply('You can only buy 1 card at a time.');
+    }
     const cardToAdd = {
       name: item.name,
       rank: item.rank || 'C',
@@ -118,8 +141,10 @@ async function execute(message, args) {
     };
     addCardWithTransformation(user, cardToAdd);
   } else {
-    // Add the normalized item name to inventory array
-    user.inventory.push(normalizedItemName);
+    // Add the normalized item name to inventory array multiple times
+    for (let i = 0; i < amount; i++) {
+      user.inventory.push(normalizedItemName);
+    }
   }
 
   // Do NOT update quest progress for market transactions here (shop purchases should not count)
@@ -150,10 +175,10 @@ async function execute(message, args) {
 
   const embed = new EmbedBuilder()
     .setTitle('<:check:1390838766821965955> Purchase Successful')
-    .setDescription(`You bought **${item.name}** ${rarityEmoji}${itemTypeDesc} for **${item.price} Beli**.`)
+    .setDescription(`You bought **${amount}x ${item.name}** ${rarityEmoji}${itemTypeDesc} for **${totalCost.toLocaleString()} Beli**.`)
     .addFields(
-      { name: 'Item', value: `${item.name} ${rarityEmoji}`, inline: true },
-      { name: 'Price', value: `${item.price.toLocaleString()} Beli`, inline: true },
+      { name: 'Item', value: `${amount}x ${item.name} ${rarityEmoji}`, inline: true },
+      { name: 'Price', value: `${totalCost.toLocaleString()} Beli`, inline: true },
       { name: 'Remaining Beli', value: `${user.beli.toLocaleString()}`, inline: true }
     )
     .setColor(0x2c2f33)

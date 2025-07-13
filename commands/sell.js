@@ -137,10 +137,27 @@ async function execute(message, args) {
   }
 
   if (args.length === 0) {
-            return message.reply('Usage: `op sell <card/item name>`\n\nExample: `op sell Nami` or `op sell Basic Potion`');
+    return message.reply('Usage: `op sell <card/item name> [amount]`\n\nExample: `op sell Nami` or `op sell Basic Potion 10`');
   }
 
-  const itemName = args.join(' ').trim();
+  // Parse amount from the last argument if it's a number
+  let amount = 1;
+  let itemName = args.join(' ').trim();
+  
+  // Check if last argument is a number
+  const lastArg = args[args.length - 1];
+  if (!isNaN(lastArg) && parseInt(lastArg) > 0) {
+    amount = parseInt(lastArg);
+    itemName = args.slice(0, -1).join(' ').trim();
+  }
+
+  if (!itemName) {
+    return message.reply('Usage: `op sell <card/item name> [amount]`\n\nExample: `op sell Nami` or `op sell Basic Potion 10`');
+  }
+
+  if (amount < 1 || amount > 100) {
+    return message.reply('You can only sell 1-100 items at a time.');
+  }
 
   // First, try to find as a card
   const userCard = findUserCard(user, itemName);
@@ -160,6 +177,11 @@ async function execute(message, args) {
     // Prevent selling UR cards (optional safety measure)
     if (cardDef && cardDef.rank === 'UR') {
       return message.reply(`UR rank cards cannot be sold! "${userCard.name}" is too valuable to sell.`);
+    }
+
+    // For cards, only allow selling 1 at a time
+    if (amount > 1) {
+      return message.reply('You can only sell 1 card at a time.');
     }
 
     const sellValue = calculateCardValue(userCard, cardDef);
@@ -203,24 +225,36 @@ async function execute(message, args) {
     // Check for special items that shouldn't be sold
     const normalizedItem = normalize(userItem);
     
+    // Count how many of this item the user has
+    const itemCount = user.inventory.filter(i => normalize(i) === normalize(userItem)).length;
+    
+    if (itemCount < amount) {
+      return message.reply(`You only have ${itemCount} "${userItem}" but are trying to sell ${amount}.`);
+    }
     
     const sellValue = calculateItemSellValue(userItem);
+    const totalSellValue = sellValue * amount;
     
-    // Remove item from inventory
-    const itemIndex = user.inventory.findIndex(i => normalize(i) === normalize(userItem));
-    user.inventory.splice(itemIndex, 1);
+    // Remove items from inventory
+    let removedCount = 0;
+    for (let i = user.inventory.length - 1; i >= 0 && removedCount < amount; i--) {
+      if (normalize(user.inventory[i]) === normalize(userItem)) {
+        user.inventory.splice(i, 1);
+        removedCount++;
+      }
+    }
     
     // Add Beli
-    user.beli = (user.beli || 0) + sellValue;
+    user.beli = (user.beli || 0) + totalSellValue;
     
     await user.save();
     
     const embed = new EmbedBuilder()
       .setTitle('<:money:1390838687104897136> Item Sold!')
-      .setDescription(`You sold **${userItem}** for ${sellValue} Beli.`)
+      .setDescription(`You sold **${amount}x ${userItem}** for ${totalSellValue} Beli.`)
       .addFields(
-        { name: 'Item', value: userItem, inline: true },
-        { name: 'Sell Price', value: `${sellValue} Beli`, inline: true },
+        { name: 'Item', value: `${amount}x ${userItem}`, inline: true },
+        { name: 'Sell Price', value: `${totalSellValue} Beli`, inline: true },
         { name: 'Total Beli', value: `${user.beli}`, inline: false }
       )
       .setColor(0x2ecc40);
