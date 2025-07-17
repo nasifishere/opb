@@ -15,9 +15,21 @@ const validShopItems = [
   ...shopData.items.map(i => i.name),
   ...shopData.legendary.map(i => i.name)
 ];
+const allUsableItems = [
+  ...shopData.potions,
+  ...shopData.items.filter(i => i.effect === 'strength_boost' || i.effect === 'speed_boost' || i.effect === 'heal_team'),
+  ...shopData.items.filter(i => i.name === "Giant's Ale")
+];
 
 function isValidShopItem(itemName) {
   return validShopItems.includes(itemName);
+}
+
+function getItemButtonColor(item) {
+  if (item.category === 'healing' || item.effect === 'heal_team') return ButtonStyle.Success; // green
+  if (item.effect === 'strength_boost') return ButtonStyle.Danger; // orange/red
+  if (item.effect === 'speed_boost') return ButtonStyle.Primary; // blue
+  return ButtonStyle.Secondary;
 }
 
 // Location data based on your specifications
@@ -1704,125 +1716,105 @@ async function handleBattleAttack(interaction, user, battleMessage) {
     }
 }
 
-async function handleBattleItems(interaction, user, battleMessage) {
-    try {
-        // Use the passed-in user first, only refresh if battle state is missing
-        let currentUser = user;
-        
-        // Check if battle state exists in current user
-        if (!currentUser.exploreStates || !currentUser.exploreStates.battleState) {
-            // Try refreshing from database as fallback
-            const freshUser = await User.findOne({ userId: interaction.user.id });
-            if (!freshUser || !freshUser.exploreStates || !freshUser.exploreStates.battleState) {
-                return await interaction.followUp({ 
-                    content: 'Battle state lost! Please start exploring again with `op explore`.', 
-                    ephemeral: true 
-                });
-            }
-            currentUser = freshUser;
-        }
-
-        const usableItems = ['basicpotion', 'normalpotion', 'maxpotion'];
-        const availableItems = usableItems.filter(item => canUseInventoryItem(currentUser, item));
-        
-        if (availableItems.length === 0) {
-            return await interaction.followUp({ content: 'You have no usable items!', ephemeral: true });
-        }
-        
-        const itemButtons = availableItems.map(item => {
-            const itemLabels = {
-                'basicpotion': 'Basic Potion',
-                'normalpotion': 'Normal Potion', 
-                'maxpotion': 'Max Potion'
-            };
-            return new ButtonBuilder()
-                .setCustomId(`use_${item}`)
-                .setLabel(itemLabels[item] || item)
-                .setStyle(ButtonStyle.Primary);
-        });
-        
-        const itemRow = new ActionRowBuilder().addComponents(itemButtons.slice(0, 5));
-        
-        const itemMessage = await interaction.followUp({ 
-            content: 'Choose an item to use:', 
-            components: [itemRow], 
-            ephemeral: true 
-        });
-
-        // Handle item selection
-        const itemFilter = i => i.user.id === interaction.user.id && i.customId.startsWith('use_');
-        const itemCollector = itemMessage.createMessageComponentCollector({ filter: itemFilter, time: 30000 });
-
-        itemCollector.on('collect', async itemInteraction => {
-            try {
-                await itemInteraction.deferUpdate();
-                
-                // Use the outer currentUser directly instead of refreshing
-                // This prevents battle state loss from database consistency issues
-                const itemName = itemInteraction.customId.replace('use_', '');
-                const effect = useInventoryItem(currentUser, itemName);
-                
-                if (!effect) {
-                    return await itemInteraction.followUp({ content: 'Item could not be used!', ephemeral: true });
-                }
-
-                const battleState = currentUser.exploreStates.battleState;
-                let effectText = '';
-
-                // Apply item effects
-                if (effect.type === 'heal') {
-                    // Heal the first injured team member
-                    const injuredCard = battleState.userTeam.find(card => card.currentHp < card.maxHp && card.currentHp > 0);
-                    if (injuredCard) {
-                        const healAmount = Math.floor(injuredCard.maxHp * (effect.percent / 100));
-                        const actualHeal = Math.min(healAmount, injuredCard.maxHp - injuredCard.currentHp);
-                        injuredCard.currentHp += actualHeal;
-                        effectText = `Healed ${injuredCard.name} for ${actualHeal} HP (${effect.percent}% of max HP)!`;
-                    } else {
-                        effectText = `No injured team members to heal!`;
-                    }
-                } else if (effect.type === 'attack_boost') {
-                    if (!battleState.userBoosts) battleState.userBoosts = {};
-                    battleState.userBoosts.attack_boost = { amount: effect.amount, duration: effect.duration };
-                    effectText = `Attack increased by ${effect.amount}!`;
-                } else if (effect.type === 'speed_boost') {
-                    if (!battleState.userBoosts) battleState.userBoosts = {};
-                    battleState.userBoosts.speed_boost = { amount: effect.amount, duration: effect.duration };
-                    effectText = `Speed increased by ${effect.amount}!`;
-                } else if (effect.type === 'defense_boost') {
-                    if (!battleState.userBoosts) battleState.userBoosts = {};
-                    battleState.userBoosts.defense_boost = { amount: effect.amount, duration: effect.duration };
-                    effectText = `Defense increased by ${effect.amount}!`;
-                }
-
-                await saveUserWithRetry(currentUser);
-
-                // Update battle display with item effect
-                const embed = new EmbedBuilder()
-                    .setTitle(`Item Used: ${itemName.charAt(0).toUpperCase() + itemName.slice(1)}`)
-                    .setDescription(effectText)
-                    .setColor(0x2ecc71);
-
-                await itemInteraction.editReply({ embeds: [embed], components: [] });
-
-                // Continue battle
-                battleState.turn++;
-                await handleEnemyTurn(interaction, currentUser, battleMessage);
-            } catch (error) {
-                console.error('Error in item use:', error);
-                await itemInteraction.followUp({ 
-                    content: 'Error using item. Please try again.', 
-                    ephemeral: true 
-                });
-            }
-        });
-    } catch (error) {
-        console.error('Error in handleBattleItems:', error);
-        return await interaction.followUp({ 
-            content: 'An error occurred accessing items. Please try exploring again.', 
-            ephemeral: true 
-        });
+async function handleBattleItems(interaction, user, battleMessage, page = 0) {
+  try {
+    let currentUser = user;
+    if (!currentUser.exploreStates || !currentUser.exploreStates.battleState) {
+      const freshUser = await User.findOne({ userId: interaction.user.id });
+      if (!freshUser || !freshUser.exploreStates || !freshUser.exploreStates.battleState) {
+        return await interaction.followUp({ content: 'Battle state lost! Please start exploring again with `op explore`.', ephemeral: true });
+      }
+      currentUser = freshUser;
     }
+    const inventory = currentUser.inventory || [];
+    const itemsInInventory = allUsableItems.filter(item => inventory.includes(item.name.replace(/\s+/g, '').toLowerCase()));
+    if (itemsInInventory.length === 0) {
+      return await interaction.followUp({ content: 'You have no usable items!', ephemeral: true });
+    }
+    // Pagination
+    const itemsPerPage = 4;
+    const start = page * itemsPerPage;
+    const end = start + itemsPerPage;
+    const pageItems = itemsInInventory.slice(start, end);
+    // Create item buttons
+    const itemButtons = pageItems.map(item =>
+      new ButtonBuilder()
+        .setCustomId(`use_${item.name.replace(/\s+/g, '').toLowerCase()}`)
+        .setLabel(item.name)
+        .setStyle(getItemButtonColor(item))
+    );
+    // Pagination buttons
+    if (itemsInInventory.length > itemsPerPage) {
+      if (start > 0) {
+        itemButtons.push(new ButtonBuilder().setCustomId('items_prev').setLabel('Previous').setStyle(ButtonStyle.Secondary));
+      }
+      if (end < itemsInInventory.length) {
+        itemButtons.push(new ButtonBuilder().setCustomId('items_next').setLabel('Next').setStyle(ButtonStyle.Primary));
+      }
+    }
+    itemButtons.push(new ButtonBuilder().setCustomId('items_back_to_battle').setLabel('Back').setStyle(ButtonStyle.Secondary));
+    const itemRow = new ActionRowBuilder().addComponents(itemButtons);
+    const itemMessage = await interaction.followUp({ content: 'Choose an item to use:', components: [itemRow], ephemeral: true });
+    // Handle item selection
+    const itemFilter = i => i.user.id === interaction.user.id;
+    const itemCollector = itemMessage.createMessageComponentCollector({ filter: itemFilter, time: 30000 });
+    itemCollector.on('collect', async itemInteraction => {
+      try {
+        await itemInteraction.deferUpdate();
+        if (itemInteraction.customId === 'items_next') {
+          itemCollector.stop();
+          await handleBattleItems(itemInteraction, currentUser, battleMessage, page + 1);
+        } else if (itemInteraction.customId === 'items_prev') {
+          itemCollector.stop();
+          await handleBattleItems(itemInteraction, currentUser, battleMessage, page - 1);
+        } else if (itemInteraction.customId.startsWith('use_')) {
+          itemCollector.stop();
+          const itemName = itemInteraction.customId.replace('use_', '');
+          const item = allUsableItems.find(it => it.name.replace(/\s+/g, '').toLowerCase() === itemName);
+          if (!item) return;
+          // Remove item from inventory for this battle only
+          const idx = currentUser.inventory.findIndex(inv => inv === item.name.replace(/\s+/g, '').toLowerCase());
+          if (idx !== -1) currentUser.inventory.splice(idx, 1);
+          // Apply effect to battleState.userTeam
+          const battleState = currentUser.exploreStates.battleState;
+          let effectText = '';
+          if (item.category === 'healing' || item.effect === 'heal_team') {
+            battleState.userTeam.forEach(card => {
+              const heal = item.healPercent ? Math.round(card.maxHp * (item.healPercent / 100)) : (item.healAmount || 0);
+              card.currentHp = Math.min(card.maxHp, card.currentHp + heal);
+            });
+            effectText = `Healed your team with ${item.name}!`;
+          } else if (item.effect === 'strength_boost') {
+            battleState.userTeam.forEach(card => {
+              card.tempAtkBoost = (card.tempAtkBoost || 0) + 10;
+            });
+            effectText = `Boosted your team's strength with ${item.name}!`;
+          } else if (item.effect === 'speed_boost') {
+            battleState.userTeam.forEach(card => {
+              card.tempSpdBoost = (card.tempSpdBoost || 0) + 10;
+            });
+            effectText = `Boosted your team's speed with ${item.name}!`;
+          }
+          await saveUserWithRetry(currentUser);
+          // Update battle display with item effect
+          const embed = new EmbedBuilder().setTitle(`Item Used: ${item.name}`).setDescription(effectText).setColor(getItemButtonColor(item));
+          await itemInteraction.editReply({ embeds: [embed], components: [] });
+          // Continue battle
+          battleState.turn++;
+          await handleEnemyTurn(itemInteraction, currentUser, battleMessage);
+        } else if (itemInteraction.customId === 'items_back_to_battle') {
+          itemCollector.stop();
+          await displayBattleState(itemInteraction, currentUser, battleMessage);
+        }
+      } catch (error) {
+        console.error('Error in item use:', error);
+        await itemInteraction.followUp({ content: 'Error using item. Please try again.', ephemeral: true });
+      }
+    });
+  } catch (error) {
+    console.error('Error in handleBattleItems:', error);
+    return await interaction.followUp({ content: 'An error occurred accessing items. Please try exploring again.', ephemeral: true });
+  }
 }
 
 async function handleEnemyTurn(interaction, user, battleMessage) {

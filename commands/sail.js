@@ -4,11 +4,25 @@ const { calculateBattleStats, calculateDamage } = require('../utils/battleSystem
 const { distributeXPToTeam } = require('../utils/levelSystem.js');
 const { saveUserWithRetry } = require('../utils/saveWithRetry.js');
 const { createProfessionalTeamDisplay, createEnemyDisplay, createBattleLogDisplay } = require('../utils/uiHelpers.js');
+const shopData = require('../data/shop.json');
+const allUsableItems = [
+  ...shopData.potions,
+  ...shopData.items.filter(i => i.effect === 'strength_boost' || i.effect === 'speed_boost' || i.effect === 'heal_team'),
+  ...shopData.items.filter(i => i.name === "Giant's Ale")
+];
+function getItemButtonColor(item) {
+  if (item.category === 'healing' || item.effect === 'heal_team') return ButtonStyle.Success; // green
+  if (item.effect === 'strength_boost') return ButtonStyle.Danger; // orange/red
+  if (item.effect === 'speed_boost') return ButtonStyle.Primary; // blue
+  return ButtonStyle.Secondary;
+}
 
 // Available arcs for sailing
 const AVAILABLE_ARCS = {
     'east blue': 'East Blue',
-    'eastblue': 'East Blue'
+    'eastblue': 'East Blue',
+    'arabasta': 'Arabasta',
+    'alabasta': 'Arabasta'
 };
 
 // Unlock requirements
@@ -496,14 +510,14 @@ async function execute(message, args, client) {
         return message.reply('Start your pirate journey with `op start` first!');
     }
     
-    // Parse arc name from arguments
-    let arcName = 'East Blue'; // Default arc
+    // Default arc is user's saga if available, else East Blue
+    let arcName = user.saga || 'East Blue';
     if (args.length > 0) {
         const inputArc = args.join(' ').toLowerCase();
         if (AVAILABLE_ARCS[inputArc]) {
             arcName = AVAILABLE_ARCS[inputArc];
         } else {
-            return message.reply(`Unknown arc "${args.join(' ')}". Available arcs: ${Object.values(AVAILABLE_ARCS).join(', ')}`);
+            return message.reply(`Unknown arc "${args.join(' ')}". Available arcs: ${[...new Set(Object.values(AVAILABLE_ARCS))].join(', ')}`);
         }
     }
     
@@ -759,34 +773,82 @@ async function handleAttack(interaction, battleMessage, user, battleState) {
     await updateBattleDisplay(battleMessage, battleState);
 }
 
-async function handleItems(interaction, battleMessage, user, battleState) {
-    const usableItems = ['Basic Potion', 'Normal Potion', 'Max Potion'];
-    const availableItems = usableItems.filter(item => canUseItem(user, item));
-    
-    if (availableItems.length === 0) {
-        battleState.battleLog.push('No usable healing items available!');
-        await updateBattleDisplay(battleMessage, battleState);
-        return;
+async function handleItems(interaction, battleMessage, user, battleState, page = 0) {
+  // Get all usable items in inventory
+  const inventory = user.inventory || [];
+  const itemsInInventory = allUsableItems.filter(item => inventory.includes(item.name.replace(/\s+/g, '').toLowerCase()));
+  if (itemsInInventory.length === 0) {
+    battleState.battleLog.push('No usable items available!');
+    await updateBattleDisplay(battleMessage, battleState);
+    return;
+  }
+  // Pagination
+  const itemsPerPage = 4;
+  const start = page * itemsPerPage;
+  const end = start + itemsPerPage;
+  const pageItems = itemsInInventory.slice(start, end);
+  // Create item buttons
+  const itemButtons = pageItems.map(item =>
+    new ButtonBuilder()
+      .setCustomId(`sail_use_${item.name.replace(/\s+/g, '').toLowerCase()}`)
+      .setLabel(item.name)
+      .setStyle(getItemButtonColor(item))
+  );
+  // Pagination buttons
+  if (itemsInInventory.length > itemsPerPage) {
+    if (start > 0) {
+      itemButtons.push(new ButtonBuilder().setCustomId('sail_items_prev').setLabel('Previous').setStyle(ButtonStyle.Secondary));
     }
-    
-    // Create item selection buttons
-    const itemButtons = availableItems.map(item => 
-        new ButtonBuilder()
-            .setCustomId(`sail_use_${item.toLowerCase().replace(/\s+/g, '')}`)
-            .setLabel(item)
-            .setStyle(ButtonStyle.Success)
-    );
-    
-    itemButtons.push(
-        new ButtonBuilder()
-            .setCustomId('sail_back_to_battle')
-            .setLabel('Back')
-            .setStyle(ButtonStyle.Secondary)
-    );
-    
-    const itemRow = new ActionRowBuilder().addComponents(itemButtons.slice(0, 5));
-    
-    await battleMessage.edit({ components: [itemRow] });
+    if (end < itemsInInventory.length) {
+      itemButtons.push(new ButtonBuilder().setCustomId('sail_items_next').setLabel('Next').setStyle(ButtonStyle.Primary));
+    }
+  }
+  itemButtons.push(new ButtonBuilder().setCustomId('sail_back_to_battle').setLabel('Back').setStyle(ButtonStyle.Secondary));
+  const itemRow = new ActionRowBuilder().addComponents(itemButtons);
+  await battleMessage.edit({ components: [itemRow] });
+  // Listen for next/prev
+  const collector = battleMessage.createMessageComponentCollector({ filter: i => i.user.id === user.userId, time: 60000 });
+  collector.on('collect', async i => {
+    if (i.customId === 'sail_items_next') {
+      collector.stop();
+      await handleItems(i, battleMessage, user, battleState, page + 1);
+    } else if (i.customId === 'sail_items_prev') {
+      collector.stop();
+      await handleItems(i, battleMessage, user, battleState, page - 1);
+    } else if (i.customId.startsWith('sail_use_')) {
+      collector.stop();
+      const itemName = i.customId.replace('sail_use_', '');
+      const item = allUsableItems.find(it => it.name.replace(/\s+/g, '').toLowerCase() === itemName);
+      if (!item) return;
+      // Remove item from inventory for this battle only
+      const idx = user.inventory.findIndex(inv => inv === item.name.replace(/\s+/g, '').toLowerCase());
+      if (idx !== -1) user.inventory.splice(idx, 1);
+      // Apply effect to battleState.userTeam
+      let effectMsg = '';
+      if (item.category === 'healing' || item.effect === 'heal_team') {
+        battleState.userTeam.forEach(card => {
+          const heal = item.healPercent ? Math.round(card.maxHp * (item.healPercent / 100)) : (item.healAmount || 0);
+          card.currentHp = Math.min(card.maxHp, card.currentHp + heal);
+        });
+        effectMsg = `Healed your team with ${item.name}!`;
+      } else if (item.effect === 'strength_boost') {
+        battleState.userTeam.forEach(card => {
+          card.tempAtkBoost = (card.tempAtkBoost || 0) + 10; // Example: +10 atk for the fight
+        });
+        effectMsg = `Boosted your team's strength with ${item.name}!`;
+      } else if (item.effect === 'speed_boost') {
+        battleState.userTeam.forEach(card => {
+          card.tempSpdBoost = (card.tempSpdBoost || 0) + 10; // Example: +10 spd for the fight
+        });
+        effectMsg = `Boosted your team's speed with ${item.name}!`;
+      }
+      battleState.battleLog.push(effectMsg);
+      await updateBattleDisplay(battleMessage, battleState);
+    } else if (i.customId === 'sail_back_to_battle') {
+      collector.stop();
+      await updateBattleDisplay(battleMessage, battleState);
+    }
+  });
 }
 
 async function handleFlee(interaction, battleMessage, user, battleState) {
