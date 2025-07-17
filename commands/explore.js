@@ -2183,13 +2183,15 @@ async function applyReward(user, reward) {
         // Add chest to user's collection
         if (!user.chests) user.chests = { C: 0, B: 0, A: 0, S: 0, UR: 0 };
         user.chests[reward.tier] = (user.chests[reward.tier] || 0) + 1;
-        
         // Store chest info for display
         if (!user.lastChestRewards) user.lastChestRewards = {};
         user.lastChestRewards = {
             tier: reward.tier,
             message: `📦 **${CHEST_TIERS[reward.tier].name}** added to your collection!`
         };
+        // Immediately save user after chest reward
+        const { saveUserWithRetry } = require('../utils/saveWithRetry.js');
+        await saveUserWithRetry(user);
     } else if (reward.type === 'multiple') {
         for (const subReward of reward.rewards) {
             await applyReward(user, subReward);

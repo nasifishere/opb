@@ -75,12 +75,11 @@ async function showChestList(message, user) {
     let totalChests = 0;
     let chestText = '';
 
-    for (const [tier, count] of Object.entries(user.chests)) {
-        if (count > 0) {
-            const chestConfig = CHEST_TIERS[tier];
-            chestText += `${chestConfig.emoji} **${chestConfig.name}**: ${count}\n`;
-            totalChests += count;
-        }
+    for (const tier of Object.keys(CHEST_TIERS)) {
+        const count = user.chests[tier] || 0;
+        const chestConfig = CHEST_TIERS[tier];
+        chestText += `${chestConfig.emoji} **${chestConfig.name}**: ${count}\n`;
+        totalChests += count;
     }
 
     if (chestText === '') {

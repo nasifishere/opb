@@ -151,7 +151,13 @@ const userSchema = new mongoose.Schema({
   // Administrative
   banned: { type: Boolean, default: false },
   banReason: { type: String },
-  lastActive: { type: Date, default: Date.now }
+  lastActive: { type: Date, default: Date.now },
+
+  // Chests collection
+  chests: {
+    type: Object,
+    default: { C: 0, B: 0, A: 0, S: 0, UR: 0 }
+  }
 }, {
   timestamps: true,
   // Ensure proper JSON serialization of Mixed types
@@ -180,6 +186,7 @@ userSchema.pre('save', function(next) {
   if (!this.completedQuests) this.completedQuests = [];
   if (!this.training) this.training = [];
   if (!this.case) this.case = [];
+  if (!this.chests) this.chests = { C: 0, B: 0, A: 0, S: 0, UR: 0 };
   
   // Ensure quest data structure exists
   if (!this.questData) {
