@@ -479,8 +479,8 @@ const LOCATIONS = {
             title: "Fight: Hungry Dinosaurs (x2)",
             desc: "Two massive dinosaurs attack your crew!",
             enemies: [
-                { name: "Hungry Dinosaur #1", hp: 150, atk: [20, 30], spd: 70, rank: "C" },
-                { name: "Hungry Dinosaur #2", hp: 150, atk: [20, 30], spd: 70, rank: "C" }
+                { name: "Hungry Dinosaur #1", hp: 105, atk: [14, 21], spd: 70, rank: "C" },
+                { name: "Hungry Dinosaur #2", hp: 105, atk: [14, 21], spd: 70, rank: "C" }
             ],
             reward: { type: "item", name: "Raw Meat" },
             loseCooldown: 60 * 60 * 1000
@@ -489,7 +489,7 @@ const LOCATIONS = {
             type: "enemy",
             title: "Fight: Mr. 5 (Sneak Attack)",
             desc: "Mr. 5 ambushes you with his explosive Devil Fruit powers!",
-            enemy: { name: "Mr. 5", hp: 150, atk: [20, 30], spd: 75, rank: "B" },
+            enemy: { name: "Mr. 5", hp: 105, atk: [14, 21], spd: 75, rank: "B" },
             reward: { type: "card", name: "Mr. 5", rank: "B" },
             loseCooldown: 90 * 60 * 1000
         },
@@ -497,7 +497,7 @@ const LOCATIONS = {
             type: "enemy",
             title: "Fight: Miss Valentine (Ambush)",
             desc: "Miss Valentine attacks from above with her weight-changing abilities!",
-            enemy: { name: "Miss Valentine", hp: 130, atk: [15, 25], spd: 80, rank: "B" },
+            enemy: { name: "Miss Valentine", hp: 91, atk: [10, 17], spd: 80, rank: "B" },
             reward: { type: "card", name: "Miss Valentine", rank: "B" },
             loseCooldown: 90 * 60 * 1000
         },
@@ -518,8 +518,8 @@ const LOCATIONS = {
             title: "Fight: Dual Agents (Mr. 5 + Valentine)",
             desc: "Mr. 5 and Miss Valentine team up for a combined attack!",
             enemies: [
-                { name: "Mr. 5", hp: 150, atk: [20, 30], spd: 75, rank: "B" },
-                { name: "Miss Valentine", hp: 130, atk: [15, 25], spd: 80, rank: "B" }
+                { name: "Mr. 5", hp: 105, atk: [14, 21], spd: 75, rank: "B" },
+                { name: "Miss Valentine", hp: 91, atk: [10, 17], spd: 80, rank: "B" }
             ],
             reward: { type: "chest", tier: "B" },
             loseCooldown: 90 * 60 * 1000
@@ -565,8 +565,8 @@ const LOCATIONS = {
             title: "Fight: Island Wolves (x2)",
             desc: "Hungry wolves attack you in the snowy wilderness!",
             enemies: [
-                { name: "Island Wolf #1", hp: 120, atk: [15, 25], spd: 65, rank: "C" },
-                { name: "Island Wolf #2", hp: 120, atk: [15, 25], spd: 65, rank: "C" }
+                { name: "Island Wolf #1", hp: 84, atk: [10, 17], spd: 65, rank: "C" },
+                { name: "Island Wolf #2", hp: 84, atk: [10, 17], spd: 65, rank: "C" }
             ],
             reward: { type: "item", name: "Wolf Fang" },
             loseCooldown: 60 * 60 * 1000
@@ -588,9 +588,9 @@ const LOCATIONS = {
             title: "Fight: Wapol's Soldiers (x3)",
             desc: "Three of Wapol's soldiers block your path to the castle!",
             enemies: [
-                { name: "Wapol Soldier #1", hp: 100, atk: [15, 15], spd: 60, rank: "C" },
-                { name: "Wapol Soldier #2", hp: 100, atk: [15, 15], spd: 60, rank: "C" },
-                { name: "Wapol Soldier #3", hp: 100, atk: [15, 15], spd: 60, rank: "C" }
+                { name: "Wapol Soldier #1", hp: 70, atk: [10, 10], spd: 60, rank: "C" },
+                { name: "Wapol Soldier #2", hp: 70, atk: [10, 10], spd: 60, rank: "C" },
+                { name: "Wapol Soldier #3", hp: 70, atk: [10, 10], spd: 60, rank: "C" }
             ],
             reward: { type: "item", name: "Marine Coat" },
             loseCooldown: 60 * 60 * 1000
@@ -628,8 +628,8 @@ const LOCATIONS = {
             title: "Fight: Chess + Kuromarimo (Mini-Boss Duo)",
             desc: "Wapol's two strongest subordinates attack together!",
             enemies: [
-                { name: "Chess", hp: 150, atk: [20, 30], spd: 70, rank: "C" },
-                { name: "Kuromarimo", hp: 170, atk: [25, 35], spd: 75, rank: "B" }
+                { name: "Chess", hp: 105, atk: [14, 21], spd: 70, rank: "C" },
+                { name: "Kuromarimo", hp: 119, atk: [17, 24], spd: 75, rank: "B" }
             ],
             reward: { type: "item", name: "Drum Kingdom Relic" },
             loseCooldown: 90 * 60 * 1000
@@ -662,8 +662,8 @@ const LOCATIONS = {
             title: "Fight: Desert Bandits (x2)",
             desc: "Two desert bandits ambush you in the scorching heat!",
             enemies: [
-                { name: "Desert Bandit #1", hp: 120, atk: [20, 30], spd: 70, rank: "C" },
-                { name: "Desert Bandit #2", hp: 120, atk: [20, 30], spd: 70, rank: "C" }
+                { name: "Desert Bandit #1", hp: 84, atk: [14, 21], spd: 70, rank: "C" },
+                { name: "Desert Bandit #2", hp: 84, atk: [14, 21], spd: 70, rank: "C" }
             ],
             reward: { type: "multiple", rewards: [
                 { type: "xp", amount: 150 },
@@ -736,8 +736,8 @@ const LOCATIONS = {
             title: "Fight: Mr. 4 & Miss Merry Christmas",
             desc: "Mr. 4 and Miss Merry Christmas team up for a deadly combination attack!",
             enemies: [
-                { name: "Mr. 4", hp: 220, atk: [25, 40], spd: 80, rank: "B" },
-                { name: "Miss Merry Christmas", hp: 240, atk: [25, 40], spd: 80, rank: "B" }
+                { name: "Mr. 4", hp: 154, atk: [17, 28], spd: 80, rank: "B" },
+                { name: "Miss Merry Christmas", hp: 168, atk: [17, 28], spd: 80, rank: "B" }
             ],
             reward: { type: "multiple", rewards: [
                 { type: "xp", amount: 250 },
@@ -1059,7 +1059,8 @@ const data = {
     description: "Begin or continue your adventure in the One Piece world!"
 };
 
-
+// Add at the top, after imports
+const ARABASTA_HARD_MODE = 'ARABASTA_HARD';
 
 async function execute(message, args, client) {
     try {

@@ -1,5 +1,6 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const User = require('../db/models/User.js');
+const { sagas } = require('../utils/sagas.js');
 
 function getCurrentLocation(stage) {
     if (stage < 7) return 'Windmill Village';
@@ -63,83 +64,92 @@ async function execute(message, args) {
             .setColor(0x2b2d31)
             .setDescription('Start your journey with `op start` first!')
             .setFooter({ text: 'Use op start to begin your adventure' });
-        
         return message.reply({ embeds: [embed] });
     }
 
+    // Determine current saga (default to East Blue)
+    let sagaIndex = 0;
+    if (args && args[0] && !isNaN(args[0])) {
+        sagaIndex = Math.max(0, Math.min(sagas.length - 1, parseInt(args[0])));
+    }
+    let saga = sagas[sagaIndex];
+
+    // Map saga to locations and stages
+    const sagaLocations = {
+        'East Blue': [
+            { name: 'Windmill Village', stages: 7, startStage: 0 },
+            { name: 'Shells Town', stages: 9, startStage: 7 },
+            { name: 'Orange Town', stages: 8, startStage: 16 },
+            { name: 'Syrup Village', stages: 5, startStage: 24 },
+            { name: 'Baratie', stages: 5, startStage: 29 },
+            { name: 'Arlong Park', stages: 9, startStage: 34 }
+        ],
+        'Alabasta': [
+            { name: 'Reverse Mountain', stages: 7, startStage: 43 },
+            { name: 'Whiskey Peak', stages: 8, startStage: 50 },
+            { name: 'Little Garden', stages: 8, startStage: 58 },
+            { name: 'Drum Island', stages: 9, startStage: 66 },
+            { name: 'Arabasta', stages: 15, startStage: 75 }
+        ]
+        // Add more sagas as needed
+    };
+    const locations = sagaLocations[saga] || [];
+
+    // Calculate progress for this saga
     const currentStage = user.stage || 0;
-    const currentLocation = getCurrentLocation(currentStage);
-    const localStage = getLocalStage(currentStage);
-    const totalStages = getTotalStagesInLocation(currentLocation);
-
-    // Calculate overall progress
-    const totalPossibleStages = 43; // 7 + 9 + 8 + 5 + 5 + 9
-    const overallProgress = Math.min(Math.floor((currentStage / totalPossibleStages) * 100), 100);
-    const overallBar = createModernProgressBar(currentStage, totalPossibleStages, 15);
-
-    const embed = new EmbedBuilder()
-        .setColor(0x2b2d31)
-        .setTitle('Adventure Progress')
-        .setDescription(`**Current Location:** ${currentLocation}\n**Overall Progress:** ${overallBar} ${overallProgress}%`)
-        .addFields(
-            { name: 'Location Status', value: currentLocation === 'East Blue Complete' ? '<:check:1390838766821965955> Complete!' : `Stage ${localStage}/${totalStages}`, inline: true },
-            { name: 'Global Stage', value: `${currentStage}/43`, inline: true },
-            { name: 'Progress', value: `${overallProgress}%`, inline: true }
-        );
-
-    // Location progress with modern styling
-    const locations = [
-        { name: 'Windmill Village', stages: 7, unlocked: currentStage >= 0, startStage: 0 },
-        { name: 'Shells Town', stages: 9, unlocked: currentStage >= 7, startStage: 7 },
-        { name: 'Orange Town', stages: 8, unlocked: currentStage >= 16, startStage: 16 },
-        { name: 'Syrup Village', stages: 5, unlocked: currentStage >= 24, startStage: 24 },
-        { name: 'Baratie', stages: 5, unlocked: currentStage >= 29, startStage: 29 },
-        { name: 'Arlong Park', stages: 9, unlocked: currentStage >= 34, startStage: 34 }
-    ];
-
     let progressText = '';
-
     locations.forEach(location => {
         const locationEnd = location.startStage + location.stages;
-        
-        let status = '';
         let progress = 0;
-        let statusIcon = '';
-
-        if (!location.unlocked) {
-            status = 'Locked';
-            statusIcon = '';
-        } else if (currentStage >= locationEnd) {
-            status = 'Complete';
-            statusIcon = '';
+        if (currentStage >= locationEnd) {
             progress = location.stages;
         } else if (currentStage >= location.startStage) {
-            status = 'Current';
-            statusIcon = '';
             progress = currentStage - location.startStage;
-        } else {
-            status = 'Upcoming';
-            statusIcon = '';
         }
-
         const progressBar = createModernProgressBar(progress, location.stages, 8);
         const percentage = Math.round((progress / location.stages) * 100);
-        
-        progressText += `${statusIcon} **${location.name}**\n`;
+        progressText += `**${location.name}**\n`;
         progressText += `${progressBar} ${progress}/${location.stages} (${percentage}%)\n\n`;
     });
 
-    embed.addFields({
-        name: 'East Blue Saga Locations',
-        value: progressText.trim(),
-        inline: false
-    });
+    const embed = new EmbedBuilder()
+        .setColor(0x2b2d31)
+        .setTitle(`${saga} Saga Progress`)
+        .setDescription(`**Current Saga:** ${saga}`)
+        .addFields({ name: `${saga} Locations`, value: progressText.trim(), inline: false })
+        .setFooter({ text: 'Use /explore to continue your adventure • Progress saves automatically' });
 
-    embed.setFooter({ 
-        text: 'Use /explore to continue your adventure • Progress saves automatically' 
-    });
+    // Add Next/Previous buttons
+    const row = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+            .setCustomId('prev_saga')
+            .setLabel('Previous')
+            .setStyle(ButtonStyle.Secondary)
+            .setDisabled(sagaIndex === 0),
+        new ButtonBuilder()
+            .setCustomId('next_saga')
+            .setLabel('Next')
+            .setStyle(ButtonStyle.Primary)
+            .setDisabled(sagaIndex === sagas.length - 1)
+    );
 
-    await message.reply({ embeds: [embed] });
+    const reply = await message.reply({ embeds: [embed], components: [row] });
+
+    // Button interaction collector
+    const filter = i => i.user.id === message.author.id;
+    const collector = reply.createMessageComponentCollector({ filter, time: 60000 });
+    collector.on('collect', async interaction => {
+        let newSagaIndex = sagaIndex;
+        if (interaction.customId === 'prev_saga') newSagaIndex--;
+        if (interaction.customId === 'next_saga') newSagaIndex++;
+        newSagaIndex = Math.max(0, Math.min(sagas.length - 1, newSagaIndex));
+        // Re-run execute with new saga index
+        await execute({ ...message, reply: interaction.reply.bind(interaction) }, [newSagaIndex]);
+        await interaction.deferUpdate();
+    });
+    collector.on('end', () => {
+        reply.edit({ components: [] }).catch(() => {});
+    });
 }
 
 module.exports = { data, execute };
