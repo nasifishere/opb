@@ -8,6 +8,17 @@ const { CHEST_TIERS } = require('../utils/chestSystem.js');
 const path = require('path');
 const fs = require('fs');
 const { createProfessionalTeamDisplay, createEnemyDisplay, createBattleLogDisplay, createBattleStatusDisplay } = require('../utils/uiHelpers.js');
+const shopData = require('../data/shop.json');
+const validShopItems = [
+  ...shopData.potions.map(i => i.name),
+  ...shopData.equipment.map(i => i.name),
+  ...shopData.items.map(i => i.name),
+  ...shopData.legendary.map(i => i.name)
+];
+
+function isValidShopItem(itemName) {
+  return validShopItems.includes(itemName);
+}
 
 // Location data based on your specifications
 const LOCATIONS = {
@@ -809,6 +820,22 @@ const LOCATIONS = {
     ]
 };
 
+// After defining LOCATIONS
+Object.values(LOCATIONS).forEach(locationArr => {
+  locationArr.forEach(stage => {
+    if (stage.reward && stage.reward.type === 'item' && !isValidShopItem(stage.reward.name)) {
+      stage.reward.name = 'Basic Potion';
+    }
+    if (stage.reward && Array.isArray(stage.reward.rewards)) {
+      stage.reward.rewards.forEach(r => {
+        if (r.type === 'item' && !isValidShopItem(r.name)) {
+          r.name = 'Basic Potion';
+        }
+      });
+    }
+  });
+});
+
 const LOCATION_COOLDOWNS = {
     'WINDMILL VILLAGE': 1 * 60 * 1000, // 1 minute
     'SHELLS TOWN': 3 * 60 * 1000, // 3 minutes
@@ -1206,6 +1233,13 @@ async function handleNarrative(message, user, stageData, currentLocation) {
         embed.setFooter({ text: `Stage ${user.stage} • Use 'op map' to see your progress` });
         
         await message.reply({ embeds: [embed] });
+
+        // In handleNarrative, after advancing to Reverse Mountain (first narrative in REVERSE MOUNTAIN)
+        if (currentLocation === 'REVERSE MOUNTAIN' && user.saga !== 'Alabasta') {
+            user.saga = 'Alabasta';
+            // Optionally, mark that the user has entered Arabasta for the first time
+            user.markModified && user.markModified('saga');
+        }
     } catch (error) {
         console.error('Error in handleNarrative:', error);
         await message.reply('An error occurred during the narrative. Please try exploring again.');

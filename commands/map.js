@@ -125,7 +125,7 @@ async function execute(message, args) {
             .setCustomId('prev_saga')
             .setLabel('Previous')
             .setStyle(ButtonStyle.Secondary)
-            .setDisabled(sagaIndex === 0),
+            .setDisabled(true), // Always disabled
         new ButtonBuilder()
             .setCustomId('next_saga')
             .setLabel('Next')
@@ -140,12 +140,43 @@ async function execute(message, args) {
     const collector = reply.createMessageComponentCollector({ filter, time: 60000 });
     collector.on('collect', async interaction => {
         let newSagaIndex = sagaIndex;
-        if (interaction.customId === 'prev_saga') newSagaIndex--;
         if (interaction.customId === 'next_saga') newSagaIndex++;
         newSagaIndex = Math.max(0, Math.min(sagas.length - 1, newSagaIndex));
-        // Re-run execute with new saga index
-        await execute({ ...message, reply: interaction.reply.bind(interaction) }, [newSagaIndex]);
-        await interaction.deferUpdate();
+        // Rebuild embed for new saga index
+        let newSaga = sagas[newSagaIndex];
+        const newLocations = sagaLocations[newSaga] || [];
+        let newProgressText = '';
+        newLocations.forEach(location => {
+            const locationEnd = location.startStage + location.stages;
+            let progress = 0;
+            if (currentStage >= locationEnd) {
+                progress = location.stages;
+            } else if (currentStage >= location.startStage) {
+                progress = currentStage - location.startStage;
+            }
+            const progressBar = createModernProgressBar(progress, location.stages, 8);
+            const percentage = Math.round((progress / location.stages) * 100);
+            newProgressText += `**${location.name}**\n`;
+            newProgressText += `${progressBar} ${progress}/${location.stages} (${percentage}%)\n\n`;
+        });
+        const newEmbed = EmbedBuilder.from(embed)
+            .setTitle(`${newSaga} Saga Progress`)
+            .setDescription(`**Current Saga:** ${newSaga}`)
+            .setFields({ name: `${newSaga} Locations`, value: newProgressText.trim(), inline: false });
+        // Always disable previous, only enable next if not last
+        const newRow = new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+                .setCustomId('prev_saga')
+                .setLabel('Previous')
+                .setStyle(ButtonStyle.Secondary)
+                .setDisabled(true),
+            new ButtonBuilder()
+                .setCustomId('next_saga')
+                .setLabel('Next')
+                .setStyle(ButtonStyle.Primary)
+                .setDisabled(newSagaIndex === sagas.length - 1)
+        );
+        await interaction.update({ embeds: [newEmbed], components: [newRow] });
     });
     collector.on('end', () => {
         reply.edit({ components: [] }).catch(() => {});
