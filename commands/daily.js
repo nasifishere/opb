@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const User = require('../db/models/User.js');
 const { distributeXPToTeam } = require('../utils/levelSystem.js');
+const { CHEST_TIERS } = require('../utils/chestSystem.js');
 
 function normalize(str) {
     return String(str || '').replace(/\s+/g, '').toLowerCase();
@@ -158,6 +159,10 @@ async function execute(message, args) {
 
   // Apply base rewards
   user.beli = (user.beli || 0) + reward.beli;
+  // Award a C chest for daily claim
+  if (!user.chests) user.chests = { C: 0, B: 0, A: 0, S: 0, UR: 0 };
+  user.chests.C = (user.chests.C || 0) + 1;
+  user.markModified('chests');
   
   // Add guaranteed bounty for higher streaks
   if (reward.guaranteedBounty) {
@@ -232,10 +237,12 @@ async function execute(message, args) {
     }
   }
 
+  // Prepare embed
   const embed = new EmbedBuilder()
-    .setTitle('🎁 Daily Reward Claimed')
-    .setDescription(`**Day ${user.dailyReward.streak}** reward collected!${user.dailyReward.streak === 7 ? '\n✨ *Maximum streak achieved! Premium rewards unlocked!*' : ''}`)
-    .setColor(user.dailyReward.streak >= 7 ? 0xe67e22 : user.dailyReward.streak >= 5 ? 0x9b59b6 : user.dailyReward.streak >= 3 ? 0x3498db : 0x2b2d31);
+    .setTitle('Daily Reward Claimed!')
+    .setColor(0x2b2d31)
+    .setDescription(`You claimed your daily reward for day **${user.dailyReward.streak}**!\n\n**+${reward.beli} Beli**\n**+${reward.xp} XP**\n**+1 Common Chest**`)
+    .setFooter({ text: `Streak: ${user.dailyReward.streak}/7 days • Next reward in 24 hours • Higher streaks = Better rewards!` });
 
   // Build reward fields
   const rewardFields = [
@@ -251,10 +258,6 @@ async function execute(message, args) {
   
   embed.addFields(rewardFields);
   
-  embed.setFooter({ 
-    text: `Streak: ${user.dailyReward.streak}/7 days • Next reward in 24 hours • Higher streaks = Better rewards!` 
-  });
-
   // Add user level up notifications
   if (userLevelResult.leveledUp) {
     const { formatLevelUpRewards } = require('../utils/userLevelSystem.js');

@@ -794,18 +794,27 @@ async function handleItems(interaction, battleMessage, user, battleState, page =
       .setLabel(item.name)
       .setStyle(getItemButtonColor(item))
   );
-  // Pagination buttons
+  // Pagination and back buttons
+  const navButtons = [];
   if (itemsInInventory.length > itemsPerPage) {
     if (start > 0) {
-      itemButtons.push(new ButtonBuilder().setCustomId('sail_items_prev').setLabel('Previous').setStyle(ButtonStyle.Secondary));
+      navButtons.push(new ButtonBuilder().setCustomId('sail_items_prev').setLabel('Previous').setStyle(ButtonStyle.Secondary));
     }
     if (end < itemsInInventory.length) {
-      itemButtons.push(new ButtonBuilder().setCustomId('sail_items_next').setLabel('Next').setStyle(ButtonStyle.Primary));
+      navButtons.push(new ButtonBuilder().setCustomId('sail_items_next').setLabel('Next').setStyle(ButtonStyle.Primary));
     }
   }
-  itemButtons.push(new ButtonBuilder().setCustomId('sail_back_to_battle').setLabel('Back').setStyle(ButtonStyle.Secondary));
-  const itemRow = new ActionRowBuilder().addComponents(itemButtons);
-  await battleMessage.edit({ components: [itemRow] });
+  navButtons.push(new ButtonBuilder().setCustomId('sail_back_to_battle').setLabel('Back').setStyle(ButtonStyle.Secondary));
+  // Split into multiple ActionRows if needed
+  const actionRows = [];
+  for (let i = 0; i < itemButtons.length; i += 5) {
+    actionRows.push(new ActionRowBuilder().addComponents(itemButtons.slice(i, i + 5)));
+  }
+  // Add nav buttons as a separate row if needed
+  if (navButtons.length > 0) {
+    actionRows.push(new ActionRowBuilder().addComponents(navButtons));
+  }
+  await battleMessage.edit({ components: actionRows });
   // Listen for next/prev
   const collector = battleMessage.createMessageComponentCollector({ filter: i => i.user.id === user.userId, time: 60000 });
   collector.on('collect', async i => {
@@ -988,6 +997,25 @@ async function handleVictory(interaction, battleMessage, user, battleState) {
             // Fallback format
             rewardText += `\n**${bonusItemReward.name}** obtained!`;
         }
+    }
+    
+    // Award chests for milestone sails
+    let chestTier = null;
+    const sailNum = user.sailsCompleted[battleState.arcName] + 1;
+    if (sailNum % 50 === 0) chestTier = 'UR';
+    else if (sailNum % 30 === 0) chestTier = 'S';
+    else if (sailNum % 20 === 0) chestTier = 'A';
+    else if (sailNum % 10 === 0) chestTier = 'B';
+    else if (sailNum % 5 === 0) chestTier = 'C';
+    if (chestTier) {
+        if (!user.chests) user.chests = { C: 0, B: 0, A: 0, S: 0, UR: 0 };
+        user.chests[chestTier] = (user.chests[chestTier] || 0) + 1;
+        user.markModified('chests');
+        if (!user.lastChestRewards) user.lastChestRewards = {};
+        user.lastChestRewards = {
+            tier: chestTier,
+            message: `📦 **${CHEST_TIERS[chestTier].name}** added to your collection!`
+        };
     }
     
     const currentSailCount = user.sailsCompleted[battleState.arcName] || 0;

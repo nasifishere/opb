@@ -1743,18 +1743,27 @@ async function handleBattleItems(interaction, user, battleMessage, page = 0) {
         .setLabel(item.name)
         .setStyle(getItemButtonColor(item))
     );
-    // Pagination buttons
+    // Pagination and back buttons
+    const navButtons = [];
     if (itemsInInventory.length > itemsPerPage) {
       if (start > 0) {
-        itemButtons.push(new ButtonBuilder().setCustomId('items_prev').setLabel('Previous').setStyle(ButtonStyle.Secondary));
+        navButtons.push(new ButtonBuilder().setCustomId('items_prev').setLabel('Previous').setStyle(ButtonStyle.Secondary));
       }
       if (end < itemsInInventory.length) {
-        itemButtons.push(new ButtonBuilder().setCustomId('items_next').setLabel('Next').setStyle(ButtonStyle.Primary));
+        navButtons.push(new ButtonBuilder().setCustomId('items_next').setLabel('Next').setStyle(ButtonStyle.Primary));
       }
     }
-    itemButtons.push(new ButtonBuilder().setCustomId('items_back_to_battle').setLabel('Back').setStyle(ButtonStyle.Secondary));
-    const itemRow = new ActionRowBuilder().addComponents(itemButtons);
-    const itemMessage = await interaction.followUp({ content: 'Choose an item to use:', components: [itemRow], ephemeral: true });
+    navButtons.push(new ButtonBuilder().setCustomId('items_back_to_battle').setLabel('Back').setStyle(ButtonStyle.Secondary));
+    // Split into multiple ActionRows if needed
+    const actionRows = [];
+    for (let i = 0; i < itemButtons.length; i += 5) {
+      actionRows.push(new ActionRowBuilder().addComponents(itemButtons.slice(i, i + 5)));
+    }
+    // Add nav buttons as a separate row if needed
+    if (navButtons.length > 0) {
+      actionRows.push(new ActionRowBuilder().addComponents(navButtons));
+    }
+    const itemMessage = await interaction.followUp({ content: 'Choose an item to use:', components: actionRows, ephemeral: true });
     // Handle item selection
     const itemFilter = i => i.user.id === interaction.user.id;
     const itemCollector = itemMessage.createMessageComponentCollector({ filter: itemFilter, time: 30000 });
