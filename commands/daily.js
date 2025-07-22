@@ -163,6 +163,16 @@ async function execute(message, args) {
   if (!user.chests) user.chests = { C: 0, B: 0, A: 0, S: 0, UR: 0 };
   user.chests.C = (user.chests.C || 0) + 1;
   user.markModified('chests');
+  // Award a random bonus chest (B, A, S, or UR) with decreasing probability
+  const chestTiers = ['UR', 'S', 'A', 'B'];
+  const chestChances = [0.01, 0.03, 0.07, 0.15]; // 1% UR, 3% S, 7% A, 15% B
+  for (let i = 0; i < chestTiers.length; i++) {
+    if (Math.random() < chestChances[i]) {
+      user.chests[chestTiers[i]] = (user.chests[chestTiers[i]] || 0) + 1;
+      user.markModified('chests');
+      break; // Only one bonus chest per daily
+    }
+  }
   
   // Add guaranteed bounty for higher streaks
   if (reward.guaranteedBounty) {

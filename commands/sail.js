@@ -1016,6 +1016,8 @@ async function handleVictory(interaction, battleMessage, user, battleState) {
             tier: chestTier,
             message: `📦 **${CHEST_TIERS[chestTier].name}** added to your collection!`
         };
+        // Save user after awarding chest
+        await saveUserWithRetry(user);
     }
     
     const currentSailCount = user.sailsCompleted[battleState.arcName] || 0;
