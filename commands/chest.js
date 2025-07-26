@@ -68,36 +68,56 @@ async function execute(message, args) {
 
 async function showChestList(message, user) {
     const embed = new EmbedBuilder()
-        .setTitle('📦 Chest Collection')
-        .setDescription('Your collected chests from adventures!')
-        .setColor(0x2c2f33);
+        .setTitle('Chest Inventory')
+        .setDescription('Collected from your adventures')
+        .setColor(0x1a1a1a);
 
     let totalChests = 0;
-    let chestText = '';
+    let hasChests = false;
 
+    // Create a clean list of chest counts
+    const chestFields = [];
+    
     for (const tier of Object.keys(CHEST_TIERS)) {
         const count = user.chests[tier] || 0;
         const chestConfig = CHEST_TIERS[tier];
-        chestText += `${chestConfig.emoji} **${chestConfig.name}**: ${count}\n`;
         totalChests += count;
+        
+        if (count > 0) {
+            hasChests = true;
+        }
+        
+        // Create a clean, minimal display
+        const tierDisplay = tier === 'UR' ? 'Legendary' : chestConfig.name.replace(' Chest', '');
+        chestFields.push({
+            name: tierDisplay,
+            value: `\`${count.toString().padStart(2, '0')}\``,
+            inline: true
+        });
     }
 
-    if (chestText === '') {
-        chestText = 'No chests yet! Explore the world to find chests.';
+    if (!hasChests) {
+        embed.setDescription('No chests collected yet.\nExplore, sail, or claim daily rewards to find chests.');
+        embed.setColor(0x36393f);
+    } else {
+        embed.addFields(chestFields);
+        
+        // Add summary section
+        embed.addFields({
+            name: '\u200b',
+            value: `**Total:** \`${totalChests}\` chest${totalChests === 1 ? '' : 's'}`,
+            inline: false
+        });
     }
 
-    embed.addFields(
-        { name: 'Your Chests', value: chestText, inline: false },
-        { name: 'Total Chests', value: totalChests.toString(), inline: true }
-    );
-
+    // Clean usage information
     embed.addFields({
-        name: 'How to Open Chests',
-        value: 'Use `op chest open <tier> [amount]`\nExample: `op chest open A 3`',
+        name: 'Usage',
+        value: '```\nop chest open <tier> [amount]\n```\n**Example:** `op chest open A 3`',
         inline: false
     });
 
-    embed.setFooter({ text: 'Chests contain Beli, items, and cards!' });
+    embed.setFooter({ text: 'Contains: Beli • Items • Cards' });
 
     return message.reply({ embeds: [embed] });
 }
@@ -151,12 +171,21 @@ async function openChests(message, user, tier, amount) {
     await user.save();
 
     // Create reward display
+    const tierDisplay = tier === 'UR' ? 'Legendary' : CHEST_TIERS[tier].name.replace(' Chest', '');
     const embed = new EmbedBuilder()
-        .setTitle(`${CHEST_TIERS[tier].emoji} Chest Opening Results`)
-        .setDescription(`Opened ${amount} ${CHEST_TIERS[tier].name}${amount > 1 ? 's' : ''}!`)
-        .setColor(0x2c2f33);
+        .setTitle('Chest Opened')
+        .setDescription(`**${tierDisplay}** × ${amount}`)
+        .setColor(0x1a1a1a);
 
-    let rewardsText = `💰 **+${totalBeli.toLocaleString()} Beli**\n`;
+    // Clean reward sections
+    const rewardSections = [];
+    
+    // Beli section
+    rewardSections.push({
+        name: 'Beli',
+        value: `\`+${totalBeli.toLocaleString()}\``,
+        inline: true
+    });
 
     if (allItems.length > 0) {
         // Count items
@@ -166,28 +195,45 @@ async function openChests(message, user, tier, amount) {
         });
         
         const itemText = Object.entries(itemCounts)
-            .map(([item, count]) => `📦 **${item}**${count > 1 ? ` x${count}` : ''}`)
+            .map(([item, count]) => `**${item}**${count > 1 ? ` ×${count}` : ''}`)
             .join('\n');
-        rewardsText += itemText + '\n';
+        
+        rewardSections.push({
+            name: 'Items',
+            value: itemText,
+            inline: true
+        });
     }
 
     if (allCards.length > 0) {
         // Count cards
         const cardCounts = {};
         allCards.forEach(card => {
-            const key = `${card.name} (${card.rank})`;
+            const key = `[${card.rank}] ${card.name}`;
             cardCounts[key] = (cardCounts[key] || 0) + 1;
         });
         
         const cardText = Object.entries(cardCounts)
-            .map(([card, count]) => `🎴 **${card}**${count > 1 ? ` x${count}` : ''}`)
+            .map(([card, count]) => `**${card}**${count > 1 ? ` ×${count}` : ''}`)
             .join('\n');
-        rewardsText += cardText;
+        
+        rewardSections.push({
+            name: 'Cards',
+            value: cardText,
+            inline: true
+        });
     }
 
-    embed.addFields({ name: 'Rewards', value: rewardsText, inline: false });
-    embed.addFields({ name: 'Remaining Chests', value: `${CHEST_TIERS[tier].emoji} ${user.chests[tier]}`, inline: true });
-    embed.setFooter({ text: 'Chest rewards are random!' });
+    embed.addFields(rewardSections);
+    
+    // Add remaining chest count
+    embed.addFields({
+        name: '\u200b',
+        value: `**Remaining:** \`${user.chests[tier]}\` ${tierDisplay.toLowerCase()} chest${user.chests[tier] === 1 ? '' : 's'}`,
+        inline: false
+    });
+    
+    embed.setFooter({ text: 'Rewards are randomly generated' });
 
     return message.reply({ embeds: [embed] });
 }
