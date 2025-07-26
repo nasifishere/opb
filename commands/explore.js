@@ -2183,6 +2183,7 @@ async function applyReward(user, reward) {
         // Add chest to user's collection
         if (!user.chests) user.chests = { C: 0, B: 0, A: 0, S: 0, UR: 0 };
         user.chests[reward.tier] = (user.chests[reward.tier] || 0) + 1;
+        user.markModified('chests');
         // Store chest info for display
         if (!user.lastChestRewards) user.lastChestRewards = {};
         user.lastChestRewards = {
