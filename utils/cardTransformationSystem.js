@@ -144,8 +144,24 @@ function transformAllDuplicatesToEvolution(user, evolvedCardName, evolvedCardDef
 }
 
 /**
+ * Convert duplicate card to XP based on rank
+ * @param {string} rank - Card rank (C, B, A, S, UR)
+ * @returns {number} - XP amount
+ */
+function getXPFromDuplicate(rank) {
+  const xpValues = {
+    'C': 50,
+    'B': 100,
+    'A': 200,
+    'S': 300,
+    'UR': 300 // UR gets same as S rank
+  };
+  return xpValues[rank] || 50;
+}
+
+/**
  * Add a card to user's collection with automatic evolution transformation
- * Handles special case of cards in training by attaching duplicates to training cards
+ * Handles duplicates by converting them to XP for existing cards
  * @param {Object} user - User object
  * @param {Object} cardToAdd - Card object to add
  * @returns {Object} - Result object with success status and additional info
@@ -189,8 +205,37 @@ function addCardWithTransformation(user, cardToAdd) {
   // Transform the card if user owns higher evolution
   const transformedCard = transformCardToEvolution(user, cardToAdd);
   
+  // Check if user already owns this exact card (or any card in the evolution chain)
+  const evolutionChain = getEvolutionChain(transformedCard.name);
+  const existingCard = user.cards.find(card => 
+    evolutionChain.some(chainCard => normalize(chainCard) === normalize(card.name))
+  );
+  
+  if (existingCard) {
+    // Convert duplicate to XP for the existing card
+    const xpGain = getXPFromDuplicate(transformedCard.rank);
+    existingCard.experience = (existingCard.experience || 0) + xpGain;
+    
+    // Check for level up (100 XP per level)
+    const newLevel = Math.floor(existingCard.experience / 100) + 1;
+    const oldLevel = existingCard.level || 1;
+    
+    if (newLevel > oldLevel) {
+      existingCard.level = newLevel;
+    }
+    
+    return { 
+      isDuplicate: true, 
+      existingCard: existingCard,
+      xpGained: xpGain,
+      leveledUp: newLevel > oldLevel,
+      oldLevel: oldLevel,
+      newLevel: newLevel
+    };
+  }
+  
   user.cards.push(transformedCard);
-  return { attachedToTraining: false, addedCard: transformedCard };
+  return { attachedToTraining: false, addedCard: transformedCard, isDuplicate: false };
 }
 
 /**
@@ -211,5 +256,6 @@ module.exports = {
   transformCardToEvolution,
   transformAllDuplicatesToEvolution,
   addCardWithTransformation,
-  userHasEvolvedVersionOf
+  userHasEvolvedVersionOf,
+  getXPFromDuplicate
 };

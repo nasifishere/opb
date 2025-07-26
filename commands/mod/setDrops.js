@@ -207,10 +207,23 @@ async function claimDrop(interaction, card, client) {
             });
         }
 
+        // Check saga restrictions - users can only claim cards from their current saga or previous sagas
+        const { sagas } = require('../../utils/sagas.js');
+        const userSaga = user.saga || 'East Blue';
+        const userSagaIndex = sagas.indexOf(userSaga);
+        const cardSagaIndex = sagas.indexOf(card.saga);
+
+        if (cardSagaIndex > userSagaIndex) {
+            return interaction.followUp({
+                content: `\u274c You cannot claim cards from the **${card.saga}** saga yet! You are currently in the **${userSaga}** saga. Progress through the story to unlock more sagas.`,
+                ephemeral: true
+            });
+        }
+
         // Add card to user's collection using transformation system
         if (!user.cards) user.cards = [];
         const { addCardWithTransformation } = require('../../utils/cardTransformationSystem.js');
-        addCardWithTransformation(user, {
+        const result = addCardWithTransformation(user, {
             name: card.name,
             rank: card.rank,
             level: 1,
@@ -220,19 +233,43 @@ async function claimDrop(interaction, card, client) {
 
         await user.save();
 
-        // Update the drop message
-        const claimedEmbed = new EmbedBuilder()
-            .setTitle('\ud83c\udf89 Card Claimed!')
-            .setDescription(`**${interaction.user.username}** claimed **[${card.rank}] ${card.name}**!`)
-            .setColor(0x2ecc71);
+        // Update the drop message based on result
+        let claimedEmbed;
+        if (result.isDuplicate) {
+            claimedEmbed = new EmbedBuilder()
+                .setTitle('\ud83c\udf89 Card Claimed!')
+                .setDescription(`**${interaction.user.username}** claimed **[${card.rank}] ${card.name}**!\n\n\u2728 **Duplicate converted to ${result.xpGained} XP** for your existing card!${result.leveledUp ? `\n\ud83c\udf86 **Level Up!** ${result.oldLevel} → ${result.newLevel}` : ''}`)
+                .setColor(0x3498db);
+        } else if (result.attachedToTraining) {
+            claimedEmbed = new EmbedBuilder()
+                .setTitle('\ud83c\udf89 Card Claimed!')
+                .setDescription(`**${interaction.user.username}** claimed **[${card.rank}] ${card.name}**!\n\n\ud83c\udfcb\ufe0f **Added as duplicate** to your training card **${result.trainingCardName}**!`)
+                .setColor(0xf39c12);
+        } else {
+            claimedEmbed = new EmbedBuilder()
+                .setTitle('\ud83c\udf89 Card Claimed!')
+                .setDescription(`**${interaction.user.username}** claimed **[${card.rank}] ${card.name}**!`)
+                .setColor(0x2ecc71);
+        }
 
         await interaction.message.edit({ embeds: [claimedEmbed], components: [] });
 
         // Send DM to the user
         try {
+            let dmDescription = `You successfully claimed **[${card.rank}] ${card.name}** from the drop!\n\n${card.shortDesc}`;
+            
+            if (result.isDuplicate) {
+                dmDescription += `\n\n\u2728 **Duplicate Card!** Converted to **${result.xpGained} XP** for your existing card.`;
+                if (result.leveledUp) {
+                    dmDescription += `\n\ud83c\udf86 **Level Up!** Your card leveled up from ${result.oldLevel} to ${result.newLevel}!`;
+                }
+            } else if (result.attachedToTraining) {
+                dmDescription += `\n\n\ud83c\udfcb\ufe0f **Training Bonus!** Added as duplicate to your training card **${result.trainingCardName}**.`;
+            }
+
             const dmEmbed = new EmbedBuilder()
                 .setTitle('You Got a Drop!')
-                .setDescription(`You successfully claimed **[${card.rank}] ${card.name}** from the drop!\n\n${card.shortDesc}`)
+                .setDescription(dmDescription)
                 .setColor(getRankColor(card.rank));
 
             if (card.image && card.image !== "placeholder") {
