@@ -2021,15 +2021,27 @@ async function handleBattleVictory(interaction, user, battleMessage, battleLog) 
     user.lastExplore = new Date();
     user.stage++;
     
-    // Special handling for completing East Blue saga (stage 42)
+    // Special handling for completing East Blue saga (stage 43)
     if (user.stage === 43) {
-        // Give 10M bounty for completing East Blue saga
-        user.bounty = (user.bounty || 0) + 10000000;
+        // Give 5M bounty for completing East Blue saga
+        user.bounty = (user.bounty || 0) + 5000000;
         
         // Add sailing unlock
         if (!user.completedSagas) user.completedSagas = [];
         if (!user.completedSagas.includes('East Blue')) {
             user.completedSagas.push('East Blue');
+        }
+    }
+    
+    // Special handling for completing Alabasta saga (stage 102)
+    if (user.stage === 102) {
+        // Give 15M bounty for completing Alabasta saga
+        user.bounty = (user.bounty || 0) + 15000000;
+        
+        // Add Alabasta completion
+        if (!user.completedSagas) user.completedSagas = [];
+        if (!user.completedSagas.includes('Alabasta')) {
+            user.completedSagas.push('Alabasta');
         }
     }
     
@@ -2092,10 +2104,19 @@ async function handleBattleVictory(interaction, user, battleMessage, battleLog) 
     // Add saga completion bounty
     if (user.stage === 43) {
         if (rewardsText) rewardsText += '\n';
-        rewardsText += `+10,000,000 Bounty (East Blue Saga Complete!)`;
+        rewardsText += `+5,000,000 Bounty (East Blue Saga Complete!)`;
         rewardsText += '\n🌊 **Sailing Command Unlocked!**';
         rewardsText += '\n⛵ You can now sail to the Grand Line and beyond!';
         rewardsText += '\nUse `op sail` to start your next adventure!';
+    }
+    
+    // Add Alabasta saga completion bounty
+    if (user.stage === 102) {
+        if (rewardsText) rewardsText += '\n';
+        rewardsText += `+15,000,000 Bounty (Alabasta Saga Complete!)`;
+        rewardsText += '\n🏜️ **Alabasta Saga Completed!**';
+        rewardsText += '\n🎉 You have mastered the desert kingdom!';
+        rewardsText += '\nMore adventures await in future updates!';
     }
     
     if (rewardsText) {
