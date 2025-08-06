@@ -107,6 +107,23 @@ function calculateBattleStats(user, cardDatabase = allCards) {
       }
     }
 
+    // Apply devil fruit bonuses
+    if (card.eatenFruit) {
+      const devilFruit = findShopItem(card.eatenFruit);
+      if (devilFruit && devilFruit.statBoost) {
+        // Apply percentage bonuses (devil fruit bonuses are applied after equipment bonuses)
+        if (devilFruit.statBoost.power) {
+          power = Math.ceil(power * (1 + devilFruit.statBoost.power / 100));
+        }
+        if (devilFruit.statBoost.health) {
+          health = Math.ceil(health * (1 + devilFruit.statBoost.health / 100));
+        }
+        if (devilFruit.statBoost.speed) {
+          speed = Math.ceil(speed * (1 + devilFruit.statBoost.speed / 100));
+        }
+      }
+    }
+
     // Calculate attack range using damage multiplier system (same as other commands)
     const damageMultiplier = damageMultipliers[cardDef.rank] || 0.10;
     const baseDamage = power * damageMultiplier;

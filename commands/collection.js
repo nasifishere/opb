@@ -57,6 +57,22 @@ function cardEmbed(cardInstance, cardDef, ownerName, index, total, user, duplica
     }
   }
 
+  // Apply devil fruit bonuses
+  let devilFruitText = '';
+  if (card.eatenFruit) {
+    const { findShopItem } = require('../utils/battleSystem.js');
+    const devilFruit = findShopItem(card.eatenFruit);
+    if (devilFruit && devilFruit.statBoost) {
+      const boosts = devilFruit.statBoost;
+      if (boosts.power) power = Math.ceil(power * (1 + boosts.power / 100));
+      if (boosts.health) health = Math.ceil(health * (1 + boosts.health / 100));
+      if (boosts.speed) speed = Math.ceil(speed * (1 + boosts.speed / 100));
+      devilFruitText = `\n**${card.eatenFruit} eaten!**`;
+    } else {
+      devilFruitText = `\n**${card.eatenFruit} eaten!**`;
+    }
+  }
+
   const rankMultipliers = {
     'C': 0.08,
     'B': 0.10,
@@ -83,7 +99,7 @@ function cardEmbed(cardInstance, cardDef, ownerName, index, total, user, duplica
     `**Health:** ${health}\n` +
     `**Speed:** ${speed}\n` +
     `**Attack:** ${attackLow}–${attackHigh}\n` +
-    `**Type:** Combat${boostText}`;
+    `**Type:** Combat${boostText}${devilFruitText}`;
 
   const embed = new EmbedBuilder()
     .setDescription(desc)

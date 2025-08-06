@@ -101,6 +101,34 @@ function cardEmbed(cardInstance, cardDef, ownerName, index = 0, total = 1, user,
     }
   }
 
+  // Apply devil fruit bonuses
+  let devilFruitText = '';
+  if (cardInstance.eatenFruit) {
+    const devilFruit = findShopItem(cardInstance.eatenFruit);
+    if (devilFruit && devilFruit.statBoost) {
+      const boosts = devilFruit.statBoost;
+      
+      // Apply percentage boosts
+      if (boosts.power) {
+        power = Math.ceil(power * (1 + boosts.power / 100));
+      }
+      if (boosts.health) {
+        health = Math.ceil(health * (1 + boosts.health / 100));
+      }
+      if (boosts.speed) {
+        speed = Math.ceil(speed * (1 + boosts.speed / 100));
+      }
+      
+      // Build devil fruit boost description
+      const fruitBoostDescriptions = Object.entries(boosts)
+        .map(([stat, boost]) => `${stat} +${boost}%`)
+        .join(', ');
+      devilFruitText = `\n**Devil Fruit**: ${cardInstance.eatenFruit} (${fruitBoostDescriptions})`;
+    } else {
+      devilFruitText = `\n**Devil Fruit**: ${cardInstance.eatenFruit}`;
+    }
+  }
+
   // Calculate attack range using damage multiplier system from battle
   const damageMultipliers = {
     C: 0.08,
@@ -139,7 +167,8 @@ function cardEmbed(cardInstance, cardDef, ownerName, index = 0, total = 1, user,
     `Health: ${health}`,
     `Speed: ${speed}`,
     `Attack: ${attackLow}–${attackHigh}`,
-    boostText ? boostText.replace('\n**', '\n*').replace('**', '*') : ''
+    boostText ? boostText.replace('\n**', '\n*').replace('**', '*') : '',
+    devilFruitText ? devilFruitText.replace('\n**', '\n*').replace('**', '*') : ''
   ].filter(Boolean).join('\n');
 
   const embed = new EmbedBuilder()

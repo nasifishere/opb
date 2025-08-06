@@ -1,60 +1,9 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const User = require('../db/models/User.js');
-
-const tutorialSteps = [
-  {
-    title: 'Welcome to the Bot!',
-    desc: 'This interactive tutorial will guide you through the basics of the game.\n\nReact with **Next** to continue.'
-  },
-  {
-    title: 'Step 1: Starting Out',
-    desc: 'Type `op start` in the server to create your account and begin your pirate adventure.\n\nYou only need to do this once!'
-  },
-  {
-    title: 'Step 2: Viewing Your Collection',
-    desc: 'Type `op collection` to see all the cards you own.\n\nCards are your main assets and can be leveled up, evolved, and equipped.'
-  },
-  {
-    title: 'Step 3: Pulling Cards',
-    desc: 'Type `op pull` to get a new card.\n\nYou can pull cards every day.\n\n*You received a free pull!*'
-  },
-  {
-    title: 'Step 4: Using Items',
-    desc: 'Type `op inventory` to see your items.\nType `op use <item>` to use an item.\n\n*You received a Basic Potion!*'
-  },
-  {
-    title: 'Step 5: Equipping Items',
-    desc: 'Type `op shop` to buy items.\nType `op equip <card> <item>` to equip an item to a card.\n\n*You received a Lucky Charm!*'
-  },
-  {
-    title: 'Step 6: Leveling Up',
-    desc: 'Cards gain XP from battles and quests.\nType `op mycard <card>` to see a card’s stats and XP.'
-  },
-  {
-    title: 'Step 7: Evolving Cards',
-    desc: 'Some cards can evolve into stronger forms.\nType `op evolve <card>` to upgrade them if you meet the requirements.'
-  },
-  {
-    title: 'Step 8: Exploring',
-    desc: 'Type `op explore` to go on adventures and find rare cards and items.'
-  },
-  {
-    title: 'Step 9: Example Battle',
-    desc: 'Let’s simulate a simple battle!\n\nYou face a Marine...\n\n**Your card attacks!**\nYou win and gain 50 XP.\n\n*You received 50 XP!*'
-  },
-  {
-    title: 'Step 10: Quests & Rewards',
-    desc: 'Type `op quest` to see daily and weekly quests.\nComplete quests for extra rewards every day.'
-  },
-  {
-    title: 'Tutorial Complete!',
-    desc: 'You’ve finished the tutorial!\n\nTry typing `op help` in the server for more commands.\n\nGood luck, captain!'
-  }
-];
 
 const data = new SlashCommandBuilder()
   .setName('tutorial')
-  .setDescription('Start the interactive tutorial in your DMs.');
+  .setDescription('View the complete game tutorial guide.');
 
 async function execute(message) {
   const userId = message.author.id;
@@ -63,84 +12,85 @@ async function execute(message) {
     return message.reply('Start your journey with `op start` first!');
   }
 
-  // Track tutorial progress in user object
-  if (!user.tutorial) user.tutorial = { step: 0, completed: false };
-  if (user.tutorial.completed) {
-    return message.reply('You have already completed the tutorial!');
-  }
-
-  let step = 0;
-  const dm = await message.author.createDM();
-  let tutorialMsg = null;
-
-  async function sendStep() {
-    const t = tutorialSteps[step];
-    const embed = new EmbedBuilder()
-      .setTitle(t.title)
-      .setDescription(t.desc)
-      .setColor(0x2b2d31);
-    const row = new ActionRowBuilder();
-    if (step > 0) {
-      row.addComponents(new ButtonBuilder().setCustomId('prev').setLabel('Previous').setStyle(ButtonStyle.Secondary));
-    }
-    if (step < tutorialSteps.length - 1) {
-      row.addComponents(new ButtonBuilder().setCustomId('next').setLabel('Next').setStyle(ButtonStyle.Primary));
-    } else {
-      row.addComponents(new ButtonBuilder().setCustomId('finish').setLabel('Finish').setStyle(ButtonStyle.Success));
-    }
-    if (tutorialMsg) {
-      await tutorialMsg.edit({ embeds: [embed], components: [row] });
-    } else {
-      tutorialMsg = await dm.send({ embeds: [embed], components: [row] });
-    }
-  }
-
-  await sendStep();
-
-  const collector = tutorialMsg.createMessageComponentCollector({ time: 10 * 60 * 1000 });
-  collector.on('collect', async interaction => {
-    await interaction.deferUpdate();
-    if (interaction.user.id !== userId) return;
-    if (interaction.customId === 'next' && step < tutorialSteps.length - 1) {
-      step++;
-      // Give items/rewards at certain steps
-      if (step === 3 && !user.tutorial.pullGiven) {
-        user.tutorial.pullGiven = true;
-        user.pulls = (user.pulls || []);
-        user.pulls.push({ tutorial: true });
+  const embed = new EmbedBuilder()
+    .setTitle('🏴‍☠️ One Piece Bot Tutorial')
+    .setDescription('Welcome to the One Piece Bot! Here\'s everything you need to know to start your pirate adventure:')
+    .setColor(0x2b2d31)
+    .addFields([
+      {
+        name: '🚀 Getting Started',
+        value: '• Use `op start` to create your account and begin your adventure\n• You only need to do this once!',
+        inline: false
+      },
+      {
+        name: '🃏 Card System',
+        value: '• Use `op collection` to see all your cards\n• Use `op pull` to get new cards (free daily pulls!)\n• Use `op mycard <card>` to view detailed card stats\n• Cards gain XP from battles and can level up',
+        inline: false
+      },
+      {
+        name: '⚔️ Battles & Exploration',
+        value: '• Use `op explore` to go on adventures and find rare items\n• Use `op duel @user` to battle other players\n• Use `op team` to set up your battle team\n• Use `op team add <card>` to add cards to your team',
+        inline: false
+      },
+      {
+        name: '🎒 Inventory & Items',
+        value: '• Use `op inventory` to see your items\n• Use `op shop` to buy useful items\n• Potions can be used in battles to heal your cards\n• Items are automatically organized by category',
+        inline: false
+      },
+      {
+        name: '⚙️ Equipment System',
+        value: '• Use `op equip <item> <card>` to equip weapons/armor\n• Use `op eat <fruit> <card>` to feed devil fruits (permanent!)\n• Equipment provides stat bonuses in battles\n• View equipped items with `op equip`',
+        inline: false
+      },
+      {
+        name: '🌟 Card Evolution',
+        value: '• Some cards can evolve into stronger forms\n• Use `op evolve <card>` to upgrade when requirements are met\n• Evolution requires specific levels and sometimes items\n• Evolved cards have better stats and abilities',
+        inline: false
+      },
+      {
+        name: '🗺️ Progress Tracking',
+        value: '• Use `op map` to see your adventure progress\n• Use `op progress` for a quick status overview\n• Complete locations to unlock new areas\n• Each saga has unique rewards and challenges',
+        inline: false
+      },
+      {
+        name: '🎯 Quests & Daily Activities',
+        value: '• Use `op quest` to see daily and weekly quests\n• Use `op daily` to claim daily rewards\n• Complete quests for bonus XP, items, and beli\n• Daily activities reset every 24 hours',
+        inline: false
+      },
+      {
+        name: '⛵ Advanced Features',
+        value: '• Use `op sail` to explore the Grand Line (unlocked after East Blue)\n• Use `op chest` to open treasure chests you find\n• Use `op bounty` to see top bounty rankings\n• Use `op help` for a complete command list',
+        inline: false
+      },
+      {
+        name: '💡 Pro Tips',
+        value: '• Keep your team balanced with different card types\n• Save rare items for important battles\n• Level up cards evenly for best team synergy\n• Explore regularly to find new cards and items\n• Join the community for tips and strategies!',
+        inline: false
       }
-      if (step === 4 && !user.tutorial.basicPotionGiven) {
-        user.tutorial.basicPotionGiven = true;
-        user.inventory = user.inventory || [];
-        user.inventory.push('basicpotion');
-      }
-      if (step === 5 && !user.tutorial.luckyCharmGiven) {
-        user.tutorial.luckyCharmGiven = true;
-        user.inventory = user.inventory || [];
-        user.inventory.push('luckycharm');
-      }
-      if (step === 9 && !user.tutorial.battleXpGiven) {
-        user.tutorial.battleXpGiven = true;
-        user.xp = (user.xp || 0) + 50;
-      }
+    ])
+    .setFooter({ text: 'Good luck on your pirate adventure, Captain! Use op help for more commands.' });
+
+  try {
+    // Send tutorial to DMs
+    const dm = await message.author.createDM();
+    await dm.send({ embeds: [embed] });
+    await message.reply('📖 Tutorial sent to your DMs! Check your direct messages for the complete guide.');
+    
+    // Mark tutorial as completed and give starter rewards
+    if (!user.tutorial || !user.tutorial.completed) {
+      user.tutorial = { completed: true };
+      
+      // Give starter rewards
+      if (!user.inventory) user.inventory = [];
+      user.inventory.push('basicpotion');
+      user.xp = (user.xp || 0) + 50;
+      
       await user.save();
-      await sendStep();
-    } else if (interaction.customId === 'prev' && step > 0) {
-      step--;
-      await sendStep();
-    } else if (interaction.customId === 'finish') {
-      user.tutorial.completed = true;
-      await user.save();
-      await tutorialMsg.edit({ embeds: [new EmbedBuilder().setTitle('Tutorial Complete!').setDescription('You are ready to play!').setColor(0x2b2d31)], components: [] });
-      collector.stop();
     }
-  });
-
-  collector.on('end', () => {
-    tutorialMsg.edit({ components: [] }).catch(() => {});
-  });
-
-  await message.reply('Check your DMs for the tutorial!');
+  } catch (error) {
+    // If DMs are disabled, send in channel
+    await message.reply({ embeds: [embed] });
+  }
 }
 
 module.exports = { data, execute };

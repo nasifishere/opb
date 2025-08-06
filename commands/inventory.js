@@ -8,6 +8,31 @@ const { normalizeInventory } = require('../utils/inventoryUtils.js');
 const shopPath = path.resolve('data', 'shop.json');
 const shopData = JSON.parse(fs.readFileSync(shopPath, 'utf8'));
 
+// Item display name mappings for better presentation
+const displayNameMap = {
+    'basicpotion': 'Basic Potion',
+    'normalpotion': 'Normal Potion',
+    'maxpotion': 'Max Potion',
+    'rustycutlass': 'Rusty Cutlass',
+    'marinesaber': 'Marine Saber',
+    'flintlockpistol': 'Flintlock Pistol',
+    'marinerifle': 'Marine Rifle',
+    'leathervest': 'Leather Vest',
+    'marinecoat': 'Marine Coat',
+    'wadoichimonji': 'Wado Ichimonji',
+    'climatact': 'Clima-Tact',
+    'piratekingscoat': 'Pirate King\'s Coat',
+    'gomugomunomi': 'Gomu Gomu no Mi',
+    'meramerianomi': 'Mera Mera no Mi',
+    'hiehienomi': 'Hie Hie no Mi',
+    'yamiyaminomi': 'Yami Yami no Mi'
+};
+
+function getDisplayName(itemName) {
+    const normalized = normalizeItemName(itemName);
+    return displayNameMap[normalized] || itemName.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+}
+
 // Item descriptions and categories for new system
 const itemData = {
     'basicpotion': { category: 'Potions', description: 'Restores 10% HP to a card during battle' },
@@ -110,7 +135,7 @@ async function execute(message, args) {
             .setColor(0x2b2d31)
             .setDescription('Start your journey with `op start` first!')
             .setFooter({ text: 'Use op start to begin your adventure' });
-        
+
         return message.reply({ embeds: [embed] });
     }
 
@@ -143,7 +168,7 @@ async function execute(message, args) {
 
         let itemText = '';
         Object.values(items).forEach(item => {
-            const displayName = item.name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+            const displayName = getDisplayName(item.name);
             itemText += `**${displayName}** ×${item.count}\n${item.description}\n\n`;
         });
 
@@ -176,7 +201,7 @@ async function execute(message, args) {
 
         // Add summary
         const totalItems = user.inventory.length;
-        const uniqueItems = Object.values(groupedItems).reduce((acc, category) => 
+        const uniqueItems = Object.values(groupedItems).reduce((acc, category) =>
             acc + Object.keys(category).length, 0);
 
         embed.addFields({
@@ -185,8 +210,8 @@ async function execute(message, args) {
             inline: false
         });
 
-        embed.setFooter({ 
-            text: `Category ${categoryIndex + 1}/${categories.length} • Use op equip <item> <card> for equipment` 
+        embed.setFooter({
+            text: `Category ${categoryIndex + 1}/${categories.length} • Use op equip <item> <card> for equipment`
         });
 
         return embed;
@@ -342,7 +367,7 @@ async function showPotions(interaction, user) {
         let potionText = '';
         Object.values(grouped).forEach(item => {
             const info = getItemInfo(item.name);
-            const displayName = item.name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+            const displayName = getDisplayName(item.name);
             potionText += `**${displayName}** ×${item.count}\n${info.description}\n\n`;
         });
 
@@ -368,7 +393,7 @@ async function showEquipmentHelp(interaction) {
             '',
             '**Equipment Types:**',
             '• **Weapons** (Swords/Guns) - Boost power and speed',
-            '• **Armor** - Boosts health',  
+            '• **Armor** - Boosts health',
             '• **Devil Fruits** - Boost all stats (very rare, permanent, cannot be uneaten)',
             '',
             '**Examples:**',

@@ -219,21 +219,71 @@ client.once('ready', async () => {
     }
     
     // Auto-start drop timer with error handling
-    try {
-        const configPath = path.join(__dirname, 'config.json');
-        if (fs.existsSync(configPath)) {
-            const configData = await fs.promises.readFile(configPath, 'utf8');
-            const config = JSON.parse(configData);
-            
-            if (config.dropChannelId) {
-                const { startDropTimer } = require('./commands/mod/setDrops.js');
-                startDropTimer(client);
-                console.log('✅ Auto-started card drop timer');
+    async function initializeDropTimer() {
+        let dropChannelId = null;
+        
+        // Try config file first
+        try {
+            const configPath = path.join(__dirname, 'config.json');
+            if (fs.existsSync(configPath)) {
+                const configData = await fs.promises.readFile(configPath, 'utf8');
+                const config = JSON.parse(configData);
+                dropChannelId = config.dropChannelId;
+                console.log('📋 Config loaded:', { 
+                    hasDropChannelId: !!dropChannelId,
+                    dropChannelId: dropChannelId 
+                });
+            }
+        } catch (error) {
+            console.log('⚠️ Could not read config file:', error.message);
+        }
+        
+        // If no drop channel in config, try database backup
+        if (!dropChannelId) {
+            try {
+                const BotSettings = mongoose.model('BotSettings', new mongoose.Schema({
+                    key: { type: String, unique: true, required: true },
+                    value: mongoose.Schema.Types.Mixed,
+                    updatedAt: { type: Date, default: Date.now }
+                }));
+                
+                const setting = await BotSettings.findOne({ key: 'dropChannelId' });
+                if (setting && setting.value) {
+                    dropChannelId = setting.value;
+                    console.log('✅ Retrieved drop channel ID from database backup:', dropChannelId);
+                }
+            } catch (dbError) {
+                console.log('⚠️ Could not check database for drop channel:', dbError.message);
             }
         }
-    } catch (error) {
-        console.log('⚠️ No config found or drops not configured:', error.message);
+        
+        if (dropChannelId) {
+            // Verify channel exists and is accessible
+            const dropChannel = client.channels.cache.get(dropChannelId);
+            if (dropChannel) {
+                const { startDropTimer } = require('./commands/mod/setDrops.js');
+                startDropTimer(client);
+                console.log(`✅ Auto-started card drop timer for channel: ${dropChannel.name} (${dropChannelId})`);
+            } else {
+                console.log(`⚠️ Drop channel ${dropChannelId} not found or not accessible`);
+                // Try to fetch the channel
+                try {
+                    const fetchedChannel = await client.channels.fetch(dropChannelId);
+                    if (fetchedChannel) {
+                        const { startDropTimer } = require('./commands/mod/setDrops.js');
+                        startDropTimer(client);
+                        console.log(`✅ Auto-started card drop timer for fetched channel: ${fetchedChannel.name} (${dropChannelId})`);
+                    }
+                } catch (fetchError) {
+                    console.log(`❌ Could not fetch drop channel ${dropChannelId}:`, fetchError.message);
+                }
+            }
+        } else {
+            console.log('⚠️ No drop channel configured in config file or database');
+        }
     }
+    
+    await initializeDropTimer();
 });
 
 // Bulletproof message handler with single-point deduplication

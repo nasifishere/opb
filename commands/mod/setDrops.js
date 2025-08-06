@@ -3,6 +3,14 @@ const fs = require('fs').promises;
 const path = require('path');
 const User = require('../../db/models/User.js');
 
+// Create a simple settings model for bot configuration
+const mongoose = require('mongoose');
+const BotSettings = mongoose.model('BotSettings', new mongoose.Schema({
+    key: { type: String, unique: true, required: true },
+    value: mongoose.Schema.Types.Mixed,
+    updatedAt: { type: Date, default: Date.now }
+}));
+
 const OWNER_ID = '1257718161298690119';
 const CONFIG_PATH = path.join(__dirname, '../../config.json');
 const CARDS_PATH = path.join(__dirname, '../../data/cards.json');
@@ -56,8 +64,20 @@ async function execute(message, args, client) {
         // Update config
         config.dropChannelId = channel.id;
 
-        // Save config
+        // Save config to file
         await fs.writeFile(CONFIG_PATH, JSON.stringify(config, null, 2));
+        
+        // Also save to database as backup
+        try {
+            await BotSettings.findOneAndUpdate(
+                { key: 'dropChannelId' },
+                { value: channel.id, updatedAt: new Date() },
+                { upsert: true }
+            );
+            console.log('✅ Drop channel ID saved to database backup');
+        } catch (dbError) {
+            console.error('⚠️ Could not save drop channel to database:', dbError.message);
+        }
 
         const embed = new EmbedBuilder()
             .setTitle('Drop Channel Set')
@@ -106,15 +126,46 @@ function startDropTimer(client) {
     console.log('Card drop timer started - drops every 5 minutes');
 }
 
-async function dropRandomCard(client) {
+// Function to get drop channel ID from config or database backup
+async function getDropChannelId() {
     try {
+        // Try config file first
         const configData = await fs.readFile(CONFIG_PATH, 'utf8');
         const config = JSON.parse(configData);
+        if (config.dropChannelId) {
+            return config.dropChannelId;
+        }
+    } catch (error) {
+        console.log('⚠️ Could not read config file, trying database backup');
+    }
+    
+    try {
+        // Fallback to database
+        const setting = await BotSettings.findOne({ key: 'dropChannelId' });
+        if (setting && setting.value) {
+            console.log('✅ Retrieved drop channel ID from database backup');
+            return setting.value;
+        }
+    } catch (error) {
+        console.error('❌ Could not retrieve drop channel from database:', error.message);
+    }
+    
+    return null;
+}
 
-        if (!config.dropChannelId) return;
+async function dropRandomCard(client) {
+    try {
+        const dropChannelId = await getDropChannelId();
+        if (!dropChannelId) {
+            console.log('⚠️ No drop channel configured');
+            return;
+        }
 
-        const channel = client.channels.cache.get(config.dropChannelId);
-        if (!channel) return;
+        const channel = client.channels.cache.get(dropChannelId);
+        if (!channel) {
+            console.log(`⚠️ Drop channel ${dropChannelId} not found`);
+            return;
+        }
 
         // Load cards and select random one using weighted rarity (exclude evolution cards)
         const cardsData = await fs.readFile(CARDS_PATH, 'utf8');

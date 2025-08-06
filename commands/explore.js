@@ -60,7 +60,8 @@ const LOCATIONS = {
             enemy: { name: "Higuma", hp: 60, atk: [8, 10], spd: 40, rank: "C" },
             reward: { type: "multiple", rewards: [
                 { type: "beli", amount: 100 },
-                { type: "xp", amount: 50 }
+                { type: "xp", amount: 50 },
+                { type: "chest", tier: "C" }
             ]},
             loseCooldown: 60 * 60 * 1000
         },
@@ -74,7 +75,10 @@ const LOCATIONS = {
             type: "narrative",
             title: "Arrived at Romance Dawn",
             desc: "You finally arrive at Romance Dawn Island, ready to begin your grand adventure!",
-            reward: { type: "beli", amount: 75 }
+            reward: { type: "multiple", rewards: [
+                { type: "beli", amount: 75 },
+                { type: "chest", tier: "C" }
+            ]}
         },
         {
             type: "narrative",
@@ -142,7 +146,11 @@ const LOCATIONS = {
             title: "Captain Morgan",
             desc: "The tyrannical Axe-Hand Morgan appears to stop you!",
             enemy: { name: "Captain Morgan", hp: 80, atk: [10, 12], spd: 48, rank: "C" },
-            reward: { type: "beli", amount: 200, xp: 100 },
+            reward: { type: "multiple", rewards: [
+                { type: "beli", amount: 200 },
+                { type: "xp", amount: 100 },
+                { type: "chest", tier: "C" }
+            ]},
             loseCooldown: 60 * 60 * 1000
         },
         {
@@ -182,7 +190,11 @@ const LOCATIONS = {
             title: "Fight Cabaji",
             desc: "Buggy's acrobatic swordsman Cabaji challenges you to a duel!",
             enemy: { name: "Cabaji", hp: 56, atk: [8, 12], spd: 56, rank: "C" },
-            reward: { type: "beli", amount: 120, xp: 60 },
+            reward: { type: "multiple", rewards: [
+                { type: "beli", amount: 120 },
+                { type: "xp", amount: 60 },
+                { type: "chest", tier: "C" }
+            ]},
             loseCooldown: 60 * 60 * 1000
         },
         {
@@ -190,7 +202,11 @@ const LOCATIONS = {
             title: "Buggy the Clown",
             desc: "The Devil Fruit user Buggy appears! His Chop-Chop powers make sword attacks useless!",
             enemy: { name: "Buggy", hp: 96, atk: [12, 16], spd: 52, rank: "B", ability: "sword_immunity" },
-            reward: { type: "beli", amount: 300, xp: 120 },
+            reward: { type: "multiple", rewards: [
+                { type: "beli", amount: 300 },
+                { type: "xp", amount: 120 },
+                { type: "chest", tier: "B" }
+            ]},
             loseCooldown: 90 * 60 * 1000
         },
         {
@@ -232,7 +248,11 @@ const LOCATIONS = {
             title: "Captain Kuro",
             desc: "The cunning Captain Kuro reveals himself! His incredible speed gives him the first strike!",
             enemy: { name: "Captain Kuro", hp: 104, atk: [14, 18], spd: 72, rank: "B", ability: "first_strike" },
-            reward: { type: "beli", amount: 400, xp: 150 },
+            reward: { type: "multiple", rewards: [
+                { type: "beli", amount: 400 },
+                { type: "xp", amount: 150 },
+                { type: "chest", tier: "B" }
+            ]},
             loseCooldown: 90 * 60 * 1000
         },
         {
@@ -266,7 +286,11 @@ const LOCATIONS = {
             title: "Don Krieg",
             desc: "The armored pirate Don Krieg attacks! His armor reflects damage back to attackers!",
             enemy: { name: "Don Krieg", hp: 120, atk: [14, 20], spd: 64, rank: "A", ability: "damage_reflection" },
-            reward: { type: "beli", amount: 500, xp: 200 },
+            reward: { type: "multiple", rewards: [
+                { type: "beli", amount: 500 },
+                { type: "xp", amount: 200 },
+                { type: "chest", tier: "B" }
+            ]},
             loseCooldown: 120 * 60 * 1000
         },
         {
@@ -324,7 +348,11 @@ const LOCATIONS = {
             title: "Arlong",
             desc: "The saw-shark fish-man Arlong emerges for the final battle! His reign of terror ends here!",
             enemy: { name: "Arlong", hp: 160, atk: [16, 24], spd: 68, rank: "A" },
-            reward: { type: "beli", amount: 750, xp: 300 },
+            reward: { type: "multiple", rewards: [
+                { type: "beli", amount: 750 },
+                { type: "xp", amount: 300 },
+                { type: "chest", tier: "A" }
+            ]},
             loseCooldown: 120 * 60 * 1000
         },
         {

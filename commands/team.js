@@ -325,6 +325,18 @@ async function execute(message, args) {
             }
           }
         }
+
+        // Apply devil fruit bonuses
+        if (userCard.eatenFruit) {
+          const { findShopItem } = require('../utils/battleSystem.js');
+          const devilFruit = findShopItem(userCard.eatenFruit);
+          if (devilFruit && devilFruit.statBoost) {
+            const boosts = devilFruit.statBoost;
+            if (boosts.power) power = Math.ceil(power * (1 + boosts.power / 100));
+            if (boosts.health) health = Math.ceil(health * (1 + boosts.health / 100));
+            if (boosts.speed) speed = Math.ceil(speed * (1 + boosts.speed / 100));
+          }
+        }
         const cardData = {
           ...userCard,
           displayName: userCard.name,
