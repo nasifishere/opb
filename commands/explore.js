@@ -57,10 +57,11 @@ const LOCATIONS = {
             type: "boss",
             title: "Fight with Higuma",
             desc: "The mountain bandit Higuma blocks your path!",
-            enemy: { name: "Higuma", hp: 75, atk: [10, 12], spd: 50, rank: "C" },
+            enemy: { name: "Higuma", hp: 60, atk: [8, 10], spd: 40, rank: "C" },
             reward: { type: "multiple", rewards: [
                 { type: "beli", amount: 100 },
-                { type: "xp", amount: 50 }
+                { type: "xp", amount: 50 },
+                { type: "chest", tier: "C" }
             ]},
             loseCooldown: 60 * 60 * 1000
         },
@@ -74,7 +75,10 @@ const LOCATIONS = {
             type: "narrative",
             title: "Arrived at Romance Dawn",
             desc: "You finally arrive at Romance Dawn Island, ready to begin your grand adventure!",
-            reward: { type: "beli", amount: 75 }
+            reward: { type: "multiple", rewards: [
+                { type: "beli", amount: 75 },
+                { type: "chest", tier: "C" }
+            ]}
         },
         {
             type: "narrative",
@@ -109,7 +113,7 @@ const LOCATIONS = {
             type: "enemy",
             title: "Fight Helmeppo",
             desc: "The spoiled Marine captain's son challenges you!",
-            enemy: { name: "Helmeppo", hp: 20, atk: [1, 2], spd: 30, rank: "D" },
+            enemy: { name: "Helmeppo", hp: 16, atk: [1, 2], spd: 24, rank: "D" },
             reward: { type: "multiple", rewards: [
                 { type: "beli", amount: 50 },
                 { type: "xp", amount: 25 }
@@ -121,9 +125,9 @@ const LOCATIONS = {
             title: "Fight Marine Squad",
             desc: "Three Marines block your escape!",
             enemies: [
-                { name: "Marine Grunt #1", hp: 15, atk: [2, 4], spd: 25, rank: "D" },
-                { name: "Marine Grunt #2", hp: 15, atk: [2, 4], spd: 25, rank: "D" },
-                { name: "Marine Grunt #3", hp: 15, atk: [2, 4], spd: 25, rank: "D" }
+                { name: "Marine Grunt #1", hp: 12, atk: [2, 3], spd: 20, rank: "D" },
+                { name: "Marine Grunt #2", hp: 12, atk: [2, 3], spd: 20, rank: "D" },
+                { name: "Marine Grunt #3", hp: 12, atk: [2, 3], spd: 20, rank: "D" }
             ],
             reward: { type: "multiple", rewards: [
                 { type: "beli", amount: 75 },
@@ -141,8 +145,12 @@ const LOCATIONS = {
             type: "boss",
             title: "Captain Morgan",
             desc: "The tyrannical Axe-Hand Morgan appears to stop you!",
-            enemy: { name: "Captain Morgan", hp: 100, atk: [12, 15], spd: 60, rank: "C" },
-            reward: { type: "beli", amount: 200, xp: 100 },
+            enemy: { name: "Captain Morgan", hp: 80, atk: [10, 12], spd: 48, rank: "C" },
+            reward: { type: "multiple", rewards: [
+                { type: "beli", amount: 200 },
+                { type: "xp", amount: 100 },
+                { type: "chest", tier: "C" }
+            ]},
             loseCooldown: 60 * 60 * 1000
         },
         {
@@ -181,16 +189,24 @@ const LOCATIONS = {
             type: "enemy",
             title: "Fight Cabaji",
             desc: "Buggy's acrobatic swordsman Cabaji challenges you to a duel!",
-            enemy: { name: "Cabaji", hp: 70, atk: [10, 15], spd: 70, rank: "C" },
-            reward: { type: "beli", amount: 120, xp: 60 },
+            enemy: { name: "Cabaji", hp: 56, atk: [8, 12], spd: 56, rank: "C" },
+            reward: { type: "multiple", rewards: [
+                { type: "beli", amount: 120 },
+                { type: "xp", amount: 60 },
+                { type: "chest", tier: "C" }
+            ]},
             loseCooldown: 60 * 60 * 1000
         },
         {
             type: "boss",
             title: "Buggy the Clown",
             desc: "The Devil Fruit user Buggy appears! His Chop-Chop powers make sword attacks useless!",
-            enemy: { name: "Buggy", hp: 120, atk: [15, 20], spd: 65, rank: "B", ability: "sword_immunity" },
-            reward: { type: "beli", amount: 300, xp: 120 },
+            enemy: { name: "Buggy", hp: 96, atk: [12, 16], spd: 52, rank: "B", ability: "sword_immunity" },
+            reward: { type: "multiple", rewards: [
+                { type: "beli", amount: 300 },
+                { type: "xp", amount: 120 },
+                { type: "chest", tier: "B" }
+            ]},
             loseCooldown: 90 * 60 * 1000
         },
         {
@@ -218,8 +234,8 @@ const LOCATIONS = {
             title: "Fight Sham and Buchi",
             desc: "The cat brothers of the Black Cat Pirates attack!",
             enemies: [
-                { name: "Sham", hp: 70, atk: [10, 10], spd: 55, rank: "C" },
-                { name: "Buchi", hp: 70, atk: [10, 10], spd: 55, rank: "C" }
+                { name: "Sham", hp: 56, atk: [8, 8], spd: 44, rank: "C" },
+                { name: "Buchi", hp: 56, atk: [8, 8], spd: 44, rank: "C" }
             ],
             reward: { type: "multiple", rewards: [
                 { type: "beli", amount: 150 },
@@ -231,8 +247,12 @@ const LOCATIONS = {
             type: "boss",
             title: "Captain Kuro",
             desc: "The cunning Captain Kuro reveals himself! His incredible speed gives him the first strike!",
-            enemy: { name: "Captain Kuro", hp: 130, atk: [17, 22], spd: 90, rank: "B", ability: "first_strike" },
-            reward: { type: "beli", amount: 400, xp: 150 },
+            enemy: { name: "Captain Kuro", hp: 104, atk: [14, 18], spd: 72, rank: "B", ability: "first_strike" },
+            reward: { type: "multiple", rewards: [
+                { type: "beli", amount: 400 },
+                { type: "xp", amount: 150 },
+                { type: "chest", tier: "B" }
+            ]},
             loseCooldown: 90 * 60 * 1000
         },
         {
@@ -265,8 +285,12 @@ const LOCATIONS = {
             type: "boss",
             title: "Don Krieg",
             desc: "The armored pirate Don Krieg attacks! His armor reflects damage back to attackers!",
-            enemy: { name: "Don Krieg", hp: 150, atk: [18, 25], spd: 80, rank: "A", ability: "damage_reflection" },
-            reward: { type: "beli", amount: 500, xp: 200 },
+            enemy: { name: "Don Krieg", hp: 120, atk: [14, 20], spd: 64, rank: "A", ability: "damage_reflection" },
+            reward: { type: "multiple", rewards: [
+                { type: "beli", amount: 500 },
+                { type: "xp", amount: 200 },
+                { type: "chest", tier: "B" }
+            ]},
             loseCooldown: 120 * 60 * 1000
         },
         {
@@ -299,7 +323,7 @@ const LOCATIONS = {
             type: "enemy",
             title: "Fight Chew",
             desc: "The fish-man Chew attacks with his water-spitting abilities!",
-            enemy: { name: "Chew", hp: 80, atk: [15, 15], spd: 60, rank: "C" },
+            enemy: { name: "Chew", hp: 64, atk: [12, 12], spd: 48, rank: "C" },
             reward: { type: "beli", amount: 130, xp: 70 },
             loseCooldown: 60 * 60 * 1000
         },
@@ -307,7 +331,7 @@ const LOCATIONS = {
             type: "enemy",
             title: "Fight Kuroobi",
             desc: "The ray fish-man Kuroobi demonstrates his fish-man karate!",
-            enemy: { name: "Kuroobi", hp: 80, atk: [16, 16], spd: 65, rank: "C" },
+            enemy: { name: "Kuroobi", hp: 64, atk: [13, 13], spd: 52, rank: "C" },
             reward: { type: "beli", amount: 140, xp: 75 },
             loseCooldown: 60 * 60 * 1000
         },
@@ -315,7 +339,7 @@ const LOCATIONS = {
             type: "enemy",
             title: "Fight Hachi",
             desc: "The six-sword wielding octopus fish-man Hachi blocks your path!",
-            enemy: { name: "Hachi", hp: 80, atk: [17, 17], spd: 70, rank: "C" },
+            enemy: { name: "Hachi", hp: 64, atk: [14, 14], spd: 56, rank: "C" },
             reward: { type: "beli", amount: 150, xp: 80 },
             loseCooldown: 60 * 60 * 1000
         },
@@ -323,8 +347,12 @@ const LOCATIONS = {
             type: "boss",
             title: "Arlong",
             desc: "The saw-shark fish-man Arlong emerges for the final battle! His reign of terror ends here!",
-            enemy: { name: "Arlong", hp: 200, atk: [20, 30], spd: 85, rank: "A" },
-            reward: { type: "beli", amount: 750, xp: 300 },
+            enemy: { name: "Arlong", hp: 160, atk: [16, 24], spd: 68, rank: "A" },
+            reward: { type: "multiple", rewards: [
+                { type: "beli", amount: 750 },
+                { type: "xp", amount: 300 },
+                { type: "chest", tier: "A" }
+            ]},
             loseCooldown: 120 * 60 * 1000
         },
         {
@@ -352,8 +380,8 @@ const LOCATIONS = {
             title: "Fight: Sea Kings (x2)",
             desc: "Two massive Sea Kings emerge from the depths to challenge your crew!",
             enemies: [
-                { name: "Sea King #1", hp: 80, atk: [10, 20], spd: 60, rank: "C" },
-                { name: "Sea King #2", hp: 80, atk: [10, 20], spd: 60, rank: "C" }
+                { name: "Sea King #1", hp: 64, atk: [8, 16], spd: 48, rank: "C" },
+                { name: "Sea King #2", hp: 64, atk: [8, 16], spd: 48, rank: "C" }
             ],
             reward: { type: "beli", amount: 75 },
             loseCooldown: 60 * 60 * 1000
@@ -362,7 +390,7 @@ const LOCATIONS = {
             type: "boss",
             title: "Laboon Phase 1",
             desc: "The massive whale Laboon blocks your path! His sheer size makes him nearly invincible!",
-            enemy: { name: "Laboon", hp: 500, atk: [1, 5], spd: 30, rank: "B" },
+            enemy: { name: "Laboon", hp: 400, atk: [1, 4], spd: 24, rank: "B" },
             reward: { type: "beli", amount: 100 },
             loseCooldown: 90 * 60 * 1000
         },
@@ -388,7 +416,7 @@ const LOCATIONS = {
             type: "enemy",
             title: "Fight: Mr. 9",
             desc: "Mr. 9 challenges you to prove your worth as pirates!",
-            enemy: { name: "Mr. 9", hp: 100, atk: [10, 20], spd: 65, rank: "C" },
+            enemy: { name: "Mr. 9", hp: 80, atk: [8, 16], spd: 52, rank: "C" },
             reward: { type: "card", name: "Vivi", rank: "C" },
             loseCooldown: 60 * 60 * 1000
         },
@@ -423,11 +451,11 @@ const LOCATIONS = {
             title: "Fight: 5 Random Bounty Hunters",
             desc: "The friendly facade drops! Five bounty hunters reveal themselves and attack!",
             enemies: [
-                { name: "Bounty Hunter #1", hp: 70, atk: [10, 10], spd: 55, rank: "C" },
-                { name: "Bounty Hunter #2", hp: 70, atk: [10, 10], spd: 55, rank: "C" },
-                { name: "Bounty Hunter #3", hp: 70, atk: [10, 10], spd: 55, rank: "C" },
-                { name: "Bounty Hunter #4", hp: 70, atk: [10, 10], spd: 55, rank: "C" },
-                { name: "Bounty Hunter #5", hp: 70, atk: [10, 10], spd: 55, rank: "C" }
+                { name: "Bounty Hunter #1", hp: 56, atk: [8, 8], spd: 44, rank: "C" },
+                { name: "Bounty Hunter #2", hp: 56, atk: [8, 8], spd: 44, rank: "C" },
+                { name: "Bounty Hunter #3", hp: 56, atk: [8, 8], spd: 44, rank: "C" },
+                { name: "Bounty Hunter #4", hp: 56, atk: [8, 8], spd: 44, rank: "C" },
+                { name: "Bounty Hunter #5", hp: 56, atk: [8, 8], spd: 44, rank: "C" }
             ],
             reward: { type: "beli", amount: 50 },
             loseCooldown: 60 * 60 * 1000
@@ -436,7 +464,7 @@ const LOCATIONS = {
             type: "enemy",
             title: "Fight: Miss Monday",
             desc: "The muscular Miss Monday attacks with incredible strength!",
-            enemy: { name: "Miss Monday", hp: 130, atk: [15, 25], spd: 70, rank: "C" },
+            enemy: { name: "Miss Monday", hp: 104, atk: [12, 20], spd: 56, rank: "C" },
             reward: { type: "item", name: "Normal Potion" },
             loseCooldown: 60 * 60 * 1000
         },
@@ -444,7 +472,7 @@ const LOCATIONS = {
             type: "enemy",
             title: "Fight: Mr. 8 (Igaram)",
             desc: "Mr. 8, actually Igaram in disguise, fights to protect Vivi's secret!",
-            enemy: { name: "Mr. 8 (Igaram)", hp: 160, atk: [20, 30], spd: 75, rank: "B" },
+            enemy: { name: "Mr. 8 (Igaram)", hp: 128, atk: [16, 24], spd: 60, rank: "B" },
             reward: { type: "chest", tier: "C" },
             loseCooldown: 90 * 60 * 1000
         },
@@ -453,9 +481,9 @@ const LOCATIONS = {
             title: "Fight: Whiskey Peak Reinforcements",
             desc: "More bounty hunters arrive to finish the job!",
             enemies: [
-                { name: "Reinforcement #1", hp: 100, atk: [15, 15], spd: 60, rank: "C" },
-                { name: "Reinforcement #2", hp: 100, atk: [15, 15], spd: 60, rank: "C" },
-                { name: "Reinforcement #3", hp: 100, atk: [15, 15], spd: 60, rank: "C" }
+                { name: "Reinforcement #1", hp: 80, atk: [12, 12], spd: 48, rank: "C" },
+                { name: "Reinforcement #2", hp: 80, atk: [12, 12], spd: 48, rank: "C" },
+                { name: "Reinforcement #3", hp: 80, atk: [12, 12], spd: 48, rank: "C" }
             ],
             reward: { type: "beli", amount: 100 },
             loseCooldown: 60 * 60 * 1000
@@ -464,7 +492,7 @@ const LOCATIONS = {
             type: "enemy",
             title: "Fight: Zoro (Misunderstanding)",
             desc: "A misunderstanding leads to a brief clash with Zoro!",
-            enemy: { name: "Zoro (Misunderstanding)", hp: 200, atk: [25, 35], spd: 80, rank: "B" },
+            enemy: { name: "Zoro (Misunderstanding)", hp: 160, atk: [20, 28], spd: 64, rank: "B" },
             reward: { type: "beli", amount: 150 },
             loseCooldown: 90 * 60 * 1000
         },
@@ -502,8 +530,8 @@ const LOCATIONS = {
             title: "Fight: Hungry Dinosaurs (x2)",
             desc: "Two massive dinosaurs attack your crew!",
             enemies: [
-                { name: "Hungry Dinosaur #1", hp: 105, atk: [14, 21], spd: 70, rank: "C" },
-                { name: "Hungry Dinosaur #2", hp: 105, atk: [14, 21], spd: 70, rank: "C" }
+                { name: "Hungry Dinosaur #1", hp: 84, atk: [11, 17], spd: 56, rank: "C" },
+                { name: "Hungry Dinosaur #2", hp: 84, atk: [11, 17], spd: 56, rank: "C" }
             ],
             reward: { type: "item", name: "Raw Meat" },
             loseCooldown: 60 * 60 * 1000
@@ -512,7 +540,7 @@ const LOCATIONS = {
             type: "enemy",
             title: "Fight: Mr. 5 (Sneak Attack)",
             desc: "Mr. 5 ambushes you with his explosive Devil Fruit powers!",
-            enemy: { name: "Mr. 5", hp: 105, atk: [14, 21], spd: 75, rank: "B" },
+            enemy: { name: "Mr. 5", hp: 84, atk: [11, 17], spd: 60, rank: "B" },
             reward: { type: "card", name: "Mr. 5", rank: "B" },
             loseCooldown: 90 * 60 * 1000
         },
@@ -520,7 +548,7 @@ const LOCATIONS = {
             type: "enemy",
             title: "Fight: Miss Valentine (Ambush)",
             desc: "Miss Valentine attacks from above with her weight-changing abilities!",
-            enemy: { name: "Miss Valentine", hp: 91, atk: [10, 17], spd: 80, rank: "B" },
+            enemy: { name: "Miss Valentine", hp: 73, atk: [8, 14], spd: 64, rank: "B" },
             reward: { type: "card", name: "Miss Valentine", rank: "B" },
             loseCooldown: 90 * 60 * 1000
         },
@@ -541,8 +569,8 @@ const LOCATIONS = {
             title: "Fight: Dual Agents (Mr. 5 + Valentine)",
             desc: "Mr. 5 and Miss Valentine team up for a combined attack!",
             enemies: [
-                { name: "Mr. 5", hp: 105, atk: [14, 21], spd: 75, rank: "B" },
-                { name: "Miss Valentine", hp: 91, atk: [10, 17], spd: 80, rank: "B" }
+                { name: "Mr. 5", hp: 84, atk: [11, 17], spd: 60, rank: "B" },
+                { name: "Miss Valentine", hp: 73, atk: [8, 14], spd: 64, rank: "B" }
             ],
             reward: { type: "chest", tier: "B" },
             loseCooldown: 90 * 60 * 1000
@@ -551,7 +579,7 @@ const LOCATIONS = {
             type: "enemy",
             title: "Fight: Exploding Trap",
             desc: "A bomb turret activates, forcing you to fight while avoiding explosions!",
-            enemy: { name: "Bomb Turret", hp: 120, atk: [25, 35], spd: 60, rank: "B" },
+            enemy: { name: "Bomb Turret", hp: 96, atk: [20, 28], spd: 48, rank: "B" },
             reward: { type: "item", name: "Explosive Bomb" },
             loseCooldown: 90 * 60 * 1000
         },
@@ -559,7 +587,7 @@ const LOCATIONS = {
             type: "enemy",
             title: "Fight: Giant Strength Trial",
             desc: "Broggy tests your strength in a trial of honor!",
-            enemy: { name: "Broggy (Trial)", hp: 250, atk: [30, 40], spd: 85, rank: "A" },
+            enemy: { name: "Broggy (Trial)", hp: 200, atk: [24, 32], spd: 68, rank: "A" },
             reward: { type: "item", name: "Giant's Relic" },
             loseCooldown: 120 * 60 * 1000
         },
@@ -588,8 +616,8 @@ const LOCATIONS = {
             title: "Fight: Island Wolves (x2)",
             desc: "Hungry wolves attack you in the snowy wilderness!",
             enemies: [
-                { name: "Island Wolf #1", hp: 84, atk: [10, 17], spd: 65, rank: "C" },
-                { name: "Island Wolf #2", hp: 84, atk: [10, 17], spd: 65, rank: "C" }
+                { name: "Island Wolf #1", hp: 67, atk: [8, 14], spd: 52, rank: "C" },
+                { name: "Island Wolf #2", hp: 67, atk: [8, 14], spd: 52, rank: "C" }
             ],
             reward: { type: "item", name: "Wolf Fang" },
             loseCooldown: 60 * 60 * 1000
@@ -611,9 +639,9 @@ const LOCATIONS = {
             title: "Fight: Wapol's Soldiers (x3)",
             desc: "Three of Wapol's soldiers block your path to the castle!",
             enemies: [
-                { name: "Wapol Soldier #1", hp: 70, atk: [10, 10], spd: 60, rank: "C" },
-                { name: "Wapol Soldier #2", hp: 70, atk: [10, 10], spd: 60, rank: "C" },
-                { name: "Wapol Soldier #3", hp: 70, atk: [10, 10], spd: 60, rank: "C" }
+                { name: "Wapol Soldier #1", hp: 56, atk: [8, 8], spd: 48, rank: "C" },
+                { name: "Wapol Soldier #2", hp: 56, atk: [8, 8], spd: 48, rank: "C" },
+                { name: "Wapol Soldier #3", hp: 56, atk: [8, 8], spd: 48, rank: "C" }
             ],
             reward: { type: "item", name: "Marine Coat" },
             loseCooldown: 60 * 60 * 1000
@@ -628,7 +656,7 @@ const LOCATIONS = {
             type: "enemy",
             title: "Fight: Chopper (Mistaken Battle)",
             desc: "Chopper mistakes you for enemies and attacks! His medical knowledge makes him dangerous!",
-            enemy: { name: "Chopper", hp: 200, atk: [25, 35], spd: 80, rank: "B" },
+            enemy: { name: "Chopper", hp: 160, atk: [20, 28], spd: 64, rank: "B" },
             reward: { type: "card", name: "Chopper", rank: "B" },
             loseCooldown: 90 * 60 * 1000
         },
@@ -642,7 +670,7 @@ const LOCATIONS = {
             type: "enemy",
             title: "Fight: Wapol Returns",
             desc: "Wapol returns to reclaim his castle! His Devil Fruit powers make him a formidable foe!",
-            enemy: { name: "Wapol", hp: 220, atk: [20, 40], spd: 85, rank: "B" },
+            enemy: { name: "Wapol", hp: 176, atk: [16, 32], spd: 68, rank: "B" },
             reward: { type: "card", name: "Wapol", rank: "B" },
             loseCooldown: 90 * 60 * 1000
         },
@@ -651,8 +679,8 @@ const LOCATIONS = {
             title: "Fight: Chess + Kuromarimo (Mini-Boss Duo)",
             desc: "Wapol's two strongest subordinates attack together!",
             enemies: [
-                { name: "Chess", hp: 105, atk: [14, 21], spd: 70, rank: "C" },
-                { name: "Kuromarimo", hp: 119, atk: [17, 24], spd: 75, rank: "B" }
+                { name: "Chess", hp: 84, atk: [11, 17], spd: 56, rank: "C" },
+                { name: "Kuromarimo", hp: 95, atk: [14, 19], spd: 60, rank: "B" }
             ],
             reward: { type: "item", name: "Drum Kingdom Relic" },
             loseCooldown: 90 * 60 * 1000
@@ -685,8 +713,8 @@ const LOCATIONS = {
             title: "Fight: Desert Bandits (x2)",
             desc: "Two desert bandits ambush you in the scorching heat!",
             enemies: [
-                { name: "Desert Bandit #1", hp: 84, atk: [14, 21], spd: 70, rank: "C" },
-                { name: "Desert Bandit #2", hp: 84, atk: [14, 21], spd: 70, rank: "C" }
+                { name: "Desert Bandit #1", hp: 67, atk: [11, 17], spd: 56, rank: "C" },
+                { name: "Desert Bandit #2", hp: 67, atk: [11, 17], spd: 56, rank: "C" }
             ],
             reward: { type: "multiple", rewards: [
                 { type: "xp", amount: 150 },
@@ -707,7 +735,7 @@ const LOCATIONS = {
             type: "enemy",
             title: "Fight: Giant Crab",
             desc: "A massive desert crab emerges from the sand to challenge you!",
-            enemy: { name: "Giant Crab", hp: 250, atk: [20, 40], spd: 75, rank: "B" },
+            enemy: { name: "Giant Crab", hp: 200, atk: [16, 32], spd: 60, rank: "B" },
             reward: { type: "multiple", rewards: [
                 { type: "xp", amount: 200 },
                 { type: "item", name: "Crab Shell" }
@@ -727,7 +755,7 @@ const LOCATIONS = {
             type: "enemy",
             title: "Fight: Rebel Scouts",
             desc: "Rebel scouts mistake you for enemies and attack!",
-            enemy: { name: "Rebel Scout", hp: 130, atk: [20, 20], spd: 65, rank: "C" },
+            enemy: { name: "Rebel Scout", hp: 104, atk: [16, 16], spd: 52, rank: "C" },
             reward: { type: "multiple", rewards: [
                 { type: "xp", amount: 125 },
                 { type: "item", name: "Desert Cloak" }
@@ -747,7 +775,7 @@ const LOCATIONS = {
             type: "enemy",
             title: "Fight: Mr. 1 & Miss Doublefinger",
             desc: "Two of Crocodile's strongest agents attack! Mr. 1's blade powers are deadly!",
-            enemy: { name: "Mr. 1", hp: 250, atk: [30, 45], spd: 85, rank: "A" },
+            enemy: { name: "Mr. 1", hp: 200, atk: [24, 36], spd: 68, rank: "A" },
             reward: { type: "multiple", rewards: [
                 { type: "xp", amount: 300 },
                 { type: "card", name: "Mr. 1", rank: "A" }
@@ -759,8 +787,8 @@ const LOCATIONS = {
             title: "Fight: Mr. 4 & Miss Merry Christmas",
             desc: "Mr. 4 and Miss Merry Christmas team up for a deadly combination attack!",
             enemies: [
-                { name: "Mr. 4", hp: 154, atk: [17, 28], spd: 80, rank: "B" },
-                { name: "Miss Merry Christmas", hp: 168, atk: [17, 28], spd: 80, rank: "B" }
+                { name: "Mr. 4", hp: 123, atk: [14, 22], spd: 64, rank: "B" },
+                { name: "Miss Merry Christmas", hp: 134, atk: [14, 22], spd: 64, rank: "B" }
             ],
             reward: { type: "multiple", rewards: [
                 { type: "xp", amount: 250 },
@@ -781,7 +809,7 @@ const LOCATIONS = {
             type: "enemy",
             title: "Fight: Crocodile Phase 1",
             desc: "The Warlord Crocodile appears! His sand powers make him nearly invincible!",
-            enemy: { name: "Crocodile (Phase 1)", hp: 300, atk: [35, 50], spd: 90, rank: "A" },
+            enemy: { name: "Crocodile (Phase 1)", hp: 240, atk: [28, 40], spd: 72, rank: "A" },
             reward: { type: "multiple", rewards: [
                 { type: "xp", amount: 400 },
                 { type: "item", name: "Sand Scarf" }
@@ -792,7 +820,7 @@ const LOCATIONS = {
             type: "enemy",
             title: "Fight: Crocodile Phase 2",
             desc: "Crocodile returns for the final battle! This time you're ready for his tricks!",
-            enemy: { name: "Crocodile (Phase 2)", hp: 350, atk: [40, 55], spd: 95, rank: "S" },
+            enemy: { name: "Crocodile (Phase 2)", hp: 280, atk: [32, 44], spd: 76, rank: "S" },
             reward: { type: "multiple", rewards: [
                 { type: "xp", amount: 500 },
                 { type: "beli", amount: 200 },
@@ -2021,15 +2049,27 @@ async function handleBattleVictory(interaction, user, battleMessage, battleLog) 
     user.lastExplore = new Date();
     user.stage++;
     
-    // Special handling for completing East Blue saga (stage 42)
+    // Special handling for completing East Blue saga (stage 43)
     if (user.stage === 43) {
-        // Give 10M bounty for completing East Blue saga
-        user.bounty = (user.bounty || 0) + 10000000;
+        // Give 5M bounty for completing East Blue saga
+        user.bounty = (user.bounty || 0) + 5000000;
         
         // Add sailing unlock
         if (!user.completedSagas) user.completedSagas = [];
         if (!user.completedSagas.includes('East Blue')) {
             user.completedSagas.push('East Blue');
+        }
+    }
+    
+    // Special handling for completing Alabasta saga (stage 102)
+    if (user.stage === 102) {
+        // Give 15M bounty for completing Alabasta saga
+        user.bounty = (user.bounty || 0) + 15000000;
+        
+        // Add Alabasta completion
+        if (!user.completedSagas) user.completedSagas = [];
+        if (!user.completedSagas.includes('Alabasta')) {
+            user.completedSagas.push('Alabasta');
         }
     }
     
@@ -2092,10 +2132,19 @@ async function handleBattleVictory(interaction, user, battleMessage, battleLog) 
     // Add saga completion bounty
     if (user.stage === 43) {
         if (rewardsText) rewardsText += '\n';
-        rewardsText += `+10,000,000 Bounty (East Blue Saga Complete!)`;
+        rewardsText += `+5,000,000 Bounty (East Blue Saga Complete!)`;
         rewardsText += '\n🌊 **Sailing Command Unlocked!**';
         rewardsText += '\n⛵ You can now sail to the Grand Line and beyond!';
         rewardsText += '\nUse `op sail` to start your next adventure!';
+    }
+    
+    // Add Alabasta saga completion bounty
+    if (user.stage === 102) {
+        if (rewardsText) rewardsText += '\n';
+        rewardsText += `+15,000,000 Bounty (Alabasta Saga Complete!)`;
+        rewardsText += '\n🏜️ **Alabasta Saga Completed!**';
+        rewardsText += '\n🎉 You have mastered the desert kingdom!';
+        rewardsText += '\nMore adventures await in future updates!';
     }
     
     if (rewardsText) {

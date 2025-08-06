@@ -9,7 +9,12 @@ function getCurrentLocation(stage) {
     if (stage < 29) return 'Syrup Village';
     if (stage < 34) return 'Baratie';
     if (stage < 43) return 'Arlong Park';
-    return 'East Blue Complete';
+    if (stage < 53) return 'Reverse Mountain';
+    if (stage < 63) return 'Whiskey Peak';
+    if (stage < 75) return 'Little Garden';
+    if (stage < 87) return 'Drum Island';
+    if (stage < 102) return 'Arabasta';
+    return 'Adventure Complete';
 }
 
 function getLocalStage(globalStage) {
@@ -19,6 +24,11 @@ function getLocalStage(globalStage) {
     if (globalStage < 29) return globalStage - 24;
     if (globalStage < 34) return globalStage - 29;
     if (globalStage < 43) return globalStage - 34;
+    if (globalStage < 53) return globalStage - 43;
+    if (globalStage < 63) return globalStage - 53;
+    if (globalStage < 75) return globalStage - 63;
+    if (globalStage < 87) return globalStage - 75;
+    if (globalStage < 102) return globalStage - 87;
     return 0;
 }
 
@@ -29,7 +39,12 @@ function getTotalStagesInLocation(location) {
         'Orange Town': 8,
         'Syrup Village': 5,
         'Baratie': 5,
-        'Arlong Park': 9
+        'Arlong Park': 9,
+        'Reverse Mountain': 10,
+        'Whiskey Peak': 10,
+        'Little Garden': 12,
+        'Drum Island': 12,
+        'Arabasta': 15
     };
     return stageCounts[location] || 0;
 }
@@ -67,8 +82,14 @@ async function execute(message, args) {
         return message.reply({ embeds: [embed] });
     }
 
-    // Determine current saga (default to East Blue)
+    // Determine current saga based on user's stage
+    const currentStage = user.stage || 0;
     let sagaIndex = 0;
+    if (currentStage >= 43) {
+        sagaIndex = 1; // Alabasta saga
+    }
+    
+    // Allow manual saga selection via args
     if (args && args[0] && !isNaN(args[0])) {
         sagaIndex = Math.max(0, Math.min(sagas.length - 1, parseInt(args[0])));
     }
@@ -85,18 +106,17 @@ async function execute(message, args) {
             { name: 'Arlong Park', stages: 9, startStage: 34 }
         ],
         'Alabasta': [
-            { name: 'Reverse Mountain', stages: 7, startStage: 43 },
-            { name: 'Whiskey Peak', stages: 8, startStage: 50 },
-            { name: 'Little Garden', stages: 8, startStage: 58 },
-            { name: 'Drum Island', stages: 9, startStage: 66 },
-            { name: 'Arabasta', stages: 15, startStage: 75 }
+            { name: 'Reverse Mountain', stages: 10, startStage: 43 },
+            { name: 'Whiskey Peak', stages: 10, startStage: 53 },
+            { name: 'Little Garden', stages: 12, startStage: 63 },
+            { name: 'Drum Island', stages: 12, startStage: 75 },
+            { name: 'Arabasta', stages: 15, startStage: 87 }
         ]
         // Add more sagas as needed
     };
     const locations = sagaLocations[saga] || [];
 
     // Calculate progress for this saga
-    const currentStage = user.stage || 0;
     let progressText = '';
     locations.forEach(location => {
         const locationEnd = location.startStage + location.stages;

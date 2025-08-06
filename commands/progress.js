@@ -33,7 +33,12 @@ async function execute(message) {
     if (stage < 29) return 'Syrup Village';
     if (stage < 34) return 'Baratie';
     if (stage < 43) return 'Arlong Park';
-    return 'East Blue Complete';
+    if (stage < 53) return 'Reverse Mountain';
+    if (stage < 63) return 'Whiskey Peak';
+    if (stage < 75) return 'Little Garden';
+    if (stage < 87) return 'Drum Island';
+    if (stage < 102) return 'Arabasta';
+    return 'Adventure Complete';
   }
 
   const currentLocation = getCurrentLocation(user.stage || 0);

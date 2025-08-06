@@ -139,10 +139,27 @@ async function execute(message, args) {
         return message.reply(`You do not have any ${shopItem.name} in your inventory.`);
     }
 
-    // Only allow equipping equipment (not devil fruits)
-    const isEquipment = shopItem && shopItem.type === 'equipment';
-    if (!isEquipment && !legacyEquipment.includes(normalizedItemName)) {
-        return message.reply(`**${itemName}** is not an equipment item that can be equipped.`);
+    // Only allow equipping equipment (not devil fruits or utility items)
+    const isEquipment = shopItem && (
+        shopItem.type === 'equipment' || 
+        (shopItem.subtype && ['sword', 'gun', 'armor', 'weapon'].includes(shopItem.subtype))
+    );
+    
+    // Prevent utility items from being equipped
+    const isUtilityItem = shopItem && (
+        shopItem.category === 'utility' ||
+        shopItem.category === 'raid' ||
+        shopItem.effect === 'reset_pulls' ||
+        shopItem.effect === 'clear_explore_cooldowns' ||
+        shopItem.effect === 'clear_defeat_cooldown' ||
+        shopItem.effect === 'speed_boost' ||
+        shopItem.effect === 'strength_boost' ||
+        shopItem.effect === 'heal_team' ||
+        shopItem.type === 'consumable'
+    );
+    
+    if (!isEquipment || isUtilityItem) {
+        return message.reply(`**${shopItem.name}** cannot be equipped as equipment. This item is meant for ${shopItem.category === 'utility' ? 'utility use' : 'consumption'}.`);
     }
 
     // Find the card
